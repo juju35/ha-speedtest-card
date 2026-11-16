@@ -41,7 +41,7 @@ const TEST_MS = 90e3;
 
 const STRINGS = {
   en: {
-    of_plan: "{p} % of your plan",
+    of_plan: "{p}% of your plan",
     last_test: "Last test {when}",
     internet: "Internet speed",
     download: "Download",
@@ -273,7 +273,7 @@ const STRINGS = {
     unavailable: "No disponible",
   },
   it: {
-    of_plan: "{p} % del tuo abbonamento",
+    of_plan: "{p}% del tuo abbonamento",
     last_test: "Ultimo test {when}",
     internet: "Velocità internet",
     download: "Download",
@@ -331,7 +331,7 @@ const STRINGS = {
     unavailable: "Non disponibile",
   },
   nl: {
-    of_plan: "{p} % van uw abonnement",
+    of_plan: "{p}% van uw abonnement",
     last_test: "Laatste test {when}",
     internet: "Internetsnelheid",
     download: "Download",
@@ -389,7 +389,7 @@ const STRINGS = {
     unavailable: "Niet beschikbaar",
   },
   pt: {
-    of_plan: "{p} % do seu plano",
+    of_plan: "{p}% do seu plano",
     last_test: "Último teste {when}",
     internet: "Velocidade da internet",
     download: "Download",
@@ -2347,14 +2347,16 @@ const resolve = (hass, config) => {
         if (!groups.has(k)) groups.set(k, []);
         groups.get(k).push(e);
       }
+      // The first device with a download sensor: a router (Netgear) also has a device for each client it tracks.
       const want = config.device;
-      const key = [...groups.keys()].find((k) => !want || k === want || devName(hass.devices?.[k]) === want);
-      if (key === undefined) continue;
-      const list = key === "none" ? groups.get(key) : byDevice(hass).get(key) || groups.get(key);
-      const found = findSensors(hass, list);
-      if (!found.download) continue;
-      out = { platform, ...found, button: config.button ?? found.button };
-      break;
+      for (const key of [...groups.keys()].filter((k) => !want || k === want || devName(hass.devices?.[k]) === want)) {
+        const list = key === "none" ? groups.get(key) : byDevice(hass).get(key) || groups.get(key);
+        const found = findSensors(hass, list);
+        if (!found.download) continue;
+        out = { platform, ...found, button: config.button ?? found.button };
+        break;
+      }
+      if (out) break;
     }
   }
   if (out) out.name = out.platform ? PLATFORMS[out.platform].name : null;
@@ -2395,7 +2397,7 @@ const SPEED_STYLE = `
   .gauge .needle line { stroke: var(--primary-text-color); opacity: .75; }
   .gauge .hub { fill: var(--primary-text-color); opacity: .75; }
   .gauge .box { fill: color-mix(in srgb, var(--primary-text-color) 7%, transparent); stroke: color-mix(in srgb, var(--primary-text-color) 22%, transparent); }
-  .gauge .led { fill: var(--st-ok); } .gauge .led.blink { fill: var(--st-warn); }
+  .gauge .led { fill: var(--st-ok); } .gauge.testing .led.blink { fill: var(--st-warn); }
   .gauge.testing .arc { opacity: .35; }
   .gauge.testing .needle { animation: st-sweep 1.6s ease-in-out infinite alternate; }
   .gauge.testing .led.blink { animation: st-blink .8s steps(2, jump-none) infinite; }
@@ -2564,7 +2566,7 @@ class SpeedtestCard extends CardBase {
     const p = sum.dl === null ? 0 : clamp(sum.dl / sum.max, 0, 1);
     const cls = sum.status.cls === "warn" || sum.status.cls === "crit" ? sum.status.cls : "accent";
     const pt = (f, rr) => [60 - rr * Math.cos(Math.PI * f), 70 - rr * Math.sin(Math.PI * f)].map((v) => v.toFixed(1));
-    const mark = sum.plan ? (() => { const f = clamp(sum.plan / sum.max, 0, 1); const [x1, y1] = pt(f, r - 8); const [x2, y2] = pt(f, r + 8); return `<line class="mark" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke-width="2"/>`; })() : "";
+    const mark = sum.plan && sum.plan < sum.max ? (() => { const f = clamp(sum.plan / sum.max, 0, 1); const [x1, y1] = pt(f, r - 8); const [x2, y2] = pt(f, r + 8); return `<line class="mark" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke-width="2"/>`; })() : "";
     const deg = sum.testing ? 0 : p * 180;
     return `<div class="hero-art gauge ${cls}${sum.testing ? " testing" : ""} clickable"${moreInfo(m.download)} aria-label="${esc(`${this._t("download")} ${this._speed(sum.dl)} ${this._t("mbps")}`)}">
       <svg viewBox="0 0 120 100" aria-hidden="true">
@@ -2581,7 +2583,7 @@ class SpeedtestCard extends CardBase {
   // The big download speed and the lines beside the gauge: upload, ping (and jitter, loss), share of the plan.
   _heroBody(m, sum) {
     const cls = sum.status.cls === "warn" || sum.status.cls === "crit" ? sum.status.cls : "accent";
-    const lines = [`<div class="big ${cls} clickable"${moreInfo(m.download)}>${svgIcon(ICONS.download)}<b>${esc(this._speed(sum.dl))}</b><span>${esc(this._t("mbps"))}</span></div>`];
+    const lines = [`<div class="big ${cls}">${svgIcon(ICONS.download)}<b>${esc(this._speed(sum.dl))}</b><span>${esc(this._t("mbps"))}</span></div>`];
     const ln = (icon, text, entity, c = "") => `<div class="line ${c}${entity ? " clickable" : ""}"${moreInfo(entity)}>${svgIcon(icon)}<span>${esc(text)}</span></div>`;
     if (m.upload) lines.push(ln(ICONS.upload, `${this._speed(sum.ul)} ${this._t("mbps")} · ${this._t("upload")}`, m.upload, "active"));
     const pingBits = [];
@@ -2589,7 +2591,11 @@ class SpeedtestCard extends CardBase {
     if (m.jitter) pingBits.push(`${this._ms(sum.jitter)} ${this._t("ms")} ${this._t("jitter")}`);
     if (m.loss) pingBits.push(`${this._ms(sum.loss)} % ${this._t("loss")}`);
     if (pingBits.length) lines.push(ln(ICONS.ping, pingBits.join(" · "), m.ping || m.jitter || m.loss, sum.status.entity === m.ping && m.ping ? "warn" : ""));
-    if (sum.plan && sum.dl !== null) lines.push(ln(sum.status.cls === "ok" || sum.status.cls === "active" ? ICONS.check : ICONS.alert, this._t("of_plan", { p: Math.round((sum.dl / sum.plan) * 100) }), m.download, sum.status.cls === "active" ? "" : sum.status.cls));
+    // The share of the plan, coloured by the download speed alone: a high ping does not make the speed slow.
+    if (sum.plan && sum.dl !== null) {
+      const slow = sum.dl < sum.plan * sum.ratio;
+      lines.push(ln(slow ? ICONS.alert : ICONS.check, this._t("of_plan", { p: Math.round((sum.dl / sum.plan) * 100) }), null, sum.testing ? "" : slow ? "warn" : "ok"));
+    }
     else if (sum.status.cls !== "ok") lines.push(ln(ICONS.alert, sum.status.text, sum.status.entity, sum.status.cls));
     return `<div class="hero-body">${lines.join("")}</div>`;
   }

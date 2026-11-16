@@ -231,7 +231,7 @@ The full card at 6 columns of a phone's Sections view (the gauge above its value
 
 The cards read the Home Assistant entity and device registries instead of relying on entity ids: the sensors of a speed test are those of the integration's device, recognised by their translation key or name (*download*, *upload*, *ping*, a Netgear router's *downlink* / *uplink bandwidth* and *average ping*, *jitter*, *packet loss*, *server*, *ISP*, *last test*; not the latency, average or minimum variants). Entity ids can therefore be in any language or renamed.
 
-- **Units**: speeds are converted to Mbit/s from the sensor's unit (bit/s, kbit/s, Mbit/s, Gbit/s, B/s, kB/s, MB/s).
+- **Units**: speeds are converted to Mbit/s from the sensor's unit (bit/s, kbit/s, Mbit/s, Gbit/s, B/s, kB/s, MB/s, GB/s, KiB/s, MiB/s, GiB/s).
 - **History**: the card asks the recorder (`history/history_during_period`) for the download and upload sensors over `history_days`, again after each new result and every hour. The slowest test of the period is marked when it is under `alert_ratio` of the plan (or of the median).
 - **Status**: *Slow* compares the last download with the plan (or the median of the history), *High latency* the last ping with `ping_alert`.
 

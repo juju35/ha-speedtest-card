@@ -51,6 +51,11 @@ export const mockData = (variant = "default") => {
   if (variant === "slow") {
     d.states["sensor.speedtest_reception"].state = "286.4";
     d.states["sensor.speedtest_ping"].state = "31";
+    d.states["sensor.speedtest_envoi"].state = "212";
+    // The history ends with this last test, as the recorder's would: it is also the slowest of the week.
+    const h = d.ws["history/history_during_period"];
+    h["sensor.speedtest_reception"].at(-1).s = "286.4";
+    h["sensor.speedtest_envoi"].at(-1).s = "212";
   }
   return d;
 };

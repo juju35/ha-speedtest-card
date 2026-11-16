@@ -10,6 +10,8 @@
 - Speeds in KiB/s, MiB/s or GiB/s (Home Assistant's binary data-rate units) are converted to Mbit/s.
 - Ookla Speedtest: *Run a test* runs the test of the card's download sensor only.
 - A router's restart or firmware button is no longer taken for the speed test button.
+- Netgear: the router is found even when a device of a client it tracks comes first.
+- The share of the plan is coloured by the download speed alone: a high ping no longer turns it orange.
 
 ## 1.0.0 - 2026-11-16
 

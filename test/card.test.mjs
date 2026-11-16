@@ -89,7 +89,15 @@ test("a Netgear router: its speed test sensors, not its traffic counters nor its
     ["sensor", "average_ping", "ms"],
     ["button", "reboot", null],
   ];
-  const data = { states: {}, entities: {}, devices: { r: { id: "r", name: "Router" } }, ws: {} };
+  const data = { states: {}, entities: {}, devices: { phone: { id: "phone", name: "Phone" }, r: { id: "r", name: "Router" } }, ws: {} };
+  // A client the router tracks comes first, with its own device: the card goes on to the router.
+  for (const [id, key] of [
+    ["device_tracker.phone", null],
+    ["sensor.phone_link_rate", "link_rate"],
+  ]) {
+    data.entities[id] = { entity_id: id, device_id: "phone", platform: "netgear", translation_key: key };
+    data.states[id] = { entity_id: id, state: "866", attributes: { unit_of_measurement: key ? "Mbit/s" : undefined, friendly_name: `Phone ${key}` } };
+  }
   for (const [domain, key, unit] of router) {
     const id = `${domain}.router_${key}`;
     data.entities[id] = { entity_id: id, device_id: "r", platform: "netgear", translation_key: key };
@@ -134,8 +142,9 @@ test("gauge, stats, chart with the plan and the slowest test, tiles", async () =
   assert.match(h, /<b>942<\/b><span>Mbit\/s<\/span>/);
   assert.match(h, /612 Mbit\/s · Upload/);
   assert.match(h, /8 ms Ping/);
-  assert.match(h, /94 % of your plan/);
-  assert.match(h, /class="mark"/);
+  assert.match(h, /94% of your plan/);
+  // The plan is the end of the dial: no mark on it.
+  assert.doesNotMatch(h, /class="mark"/);
   assert.match(h, /class="area"/);
   assert.match(h, /Last test 14 min. ago/);
   assert.match(h, /Plan 1,000 Mbit\/s/);
@@ -243,4 +252,16 @@ test("every clickable element can be reached and used from the keyboard", async 
     assert.match(m[0], /role="button"/, m[0]);
     assert.match(m[0], /tabindex="0"/, m[0]);
   }
+});
+
+test("a high ping does not colour the share of the plan: the speed is fine", async () => {
+  const data = mockData();
+  data.states["sensor.speedtest_ping"].state = "250";
+  const card = new SpeedtestCard();
+  card.setConfig({ plan_download: 1000 });
+  card.hass = makeHass("default", { data });
+  await new Promise((r) => setTimeout(r, 0));
+  const h = card.shadowRoot.innerHTML;
+  assert.match(h, /class="chip warn/);
+  assert.match(h, /class="line ok"[^>]*>.{0,400}94% of your plan/s);
 });
