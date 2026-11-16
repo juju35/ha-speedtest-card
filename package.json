@@ -1,6 +1,6 @@
 {
   "name": "ha-speedtest-card",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Lovelace cards for Home Assistant: your internet speed tests: download gauge, upload, ping and jitter, 7-day history against your plan, and a button to run a test.",
   "private": true,
   "type": "module",

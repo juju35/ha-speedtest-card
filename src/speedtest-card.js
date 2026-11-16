@@ -4,7 +4,7 @@
  *
  * Lovelace cards for internet speed tests: a gauge of the download speed against your plan, the upload speed, the
  * ping and the jitter, a 7-day history from the recorder with your plan's line, the slowest test, and a button that
- * runs a test. The sensors come from Speedtest.net, Fast.com, iperf3, Ookla Speedtest or Speedtest Tracker, found
+ * runs a test. The sensors come from Speedtest.net, Fast.com, iperf3, Ookla Speedtest, Speedtest Tracker or a Netgear router, found
  * through the entity and device registries; any download / upload / ping sensors can also be set in the
  * configuration.
  */
@@ -26,20 +26,23 @@ const CARD_ICONS = {
 };
 
 // Integrations whose speed tests are found on their own, the order they are preferred in, and how a test is run:
-// [domain, service, data] for a service, "update" (refresh the download sensor), or "button" (press the device's
+// [domain, service, data] for a service (data "download": the download sensor as entity_id), "update" (refresh the download sensor), or "button" (press the device's
 // "run test" button).
 const PLATFORMS = {
   speedtest_tracker: { name: "Speedtest Tracker", run: "button" },
-  ookla_speedtest: { name: "Ookla Speedtest", run: ["ookla_speedtest", "run_speedtest", {}] },
+  ookla_speedtest: { name: "Ookla Speedtest", run: ["ookla_speedtest", "run_speedtest", "download"] },
   speedtestdotnet: { name: "Speedtest.net", run: "update" },
   fastdotcom: { name: "Fast.com", run: "update" },
   iperf3: { name: "iperf3", run: ["iperf3", "speedtest", {}] },
+  netgear: { name: "Netgear", run: "update" },
 };
 // How long the card says a test runs after it was started from the card, unless a new result comes earlier.
 const TEST_MS = 90e3;
 
 const STRINGS = {
   en: {
+    of_plan: "{p}% of your plan",
+    last_test: "Last test {when}",
     internet: "Internet speed",
     download: "Download",
     upload: "Upload",
@@ -96,6 +99,8 @@ const STRINGS = {
     unavailable: "Unavailable",
   },
   fr: {
+    of_plan: "{p} % de votre abonnement",
+    last_test: "Dernier test {when}",
     internet: "Débit internet",
     download: "Réception",
     upload: "Envoi",
@@ -152,6 +157,8 @@ const STRINGS = {
     unavailable: "Indisponible",
   },
   de: {
+    of_plan: "{p} % Ihres Tarifs",
+    last_test: "Letzter Test {when}",
     internet: "Internetgeschwindigkeit",
     download: "Download",
     upload: "Upload",
@@ -208,6 +215,8 @@ const STRINGS = {
     unavailable: "Nicht verfügbar",
   },
   es: {
+    of_plan: "{p} % de su contrato",
+    last_test: "Última prueba {when}",
     internet: "Velocidad de internet",
     download: "Descarga",
     upload: "Subida",
@@ -264,6 +273,8 @@ const STRINGS = {
     unavailable: "No disponible",
   },
   it: {
+    of_plan: "{p}% del tuo abbonamento",
+    last_test: "Ultimo test {when}",
     internet: "Velocità internet",
     download: "Download",
     upload: "Upload",
@@ -320,6 +331,8 @@ const STRINGS = {
     unavailable: "Non disponibile",
   },
   nl: {
+    of_plan: "{p}% van uw abonnement",
+    last_test: "Laatste test {when}",
     internet: "Internetsnelheid",
     download: "Download",
     upload: "Upload",
@@ -376,6 +389,8 @@ const STRINGS = {
     unavailable: "Niet beschikbaar",
   },
   pt: {
+    of_plan: "{p}% do seu plano",
+    last_test: "Último teste {when}",
     internet: "Velocidade da internet",
     download: "Download",
     upload: "Upload",
@@ -432,6 +447,8 @@ const STRINGS = {
     unavailable: "Indisponível",
   },
   pl: {
+    of_plan: "{p} % twojego planu",
+    last_test: "Ostatni test {when}",
     internet: "Prędkość internetu",
     download: "Pobieranie",
     upload: "Wysyłanie",
@@ -488,6 +505,8 @@ const STRINGS = {
     unavailable: "Niedostępne",
   },
   sr: {
+    of_plan: "{p} % вашег пакета",
+    last_test: "Последњи тест {when}",
     internet: "Брзина интернета",
     download: "Преузимање",
     upload: "Слање",
@@ -544,6 +563,8 @@ const STRINGS = {
     unavailable: "Недоступно",
   },
   "sr-Latn": {
+    of_plan: "{p} % vašeg paketa",
+    last_test: "Poslednji test {when}",
     internet: "Brzina interneta",
     download: "Preuzimanje",
     upload: "Slanje",
@@ -600,6 +621,8 @@ const STRINGS = {
     unavailable: "Nedostupno",
   },
   ro: {
+    of_plan: "{p} % din abonamentul dvs.",
+    last_test: "Ultimul test {when}",
     internet: "Viteza internetului",
     download: "Descărcare",
     upload: "Încărcare",
@@ -656,6 +679,8 @@ const STRINGS = {
     unavailable: "Indisponibil",
   },
   da: {
+    of_plan: "{p} % af dit abonnement",
+    last_test: "Seneste test {when}",
     internet: "Internethastighed",
     download: "Download",
     upload: "Upload",
@@ -712,6 +737,8 @@ const STRINGS = {
     unavailable: "Utilgængelig",
   },
   sv: {
+    of_plan: "{p} % av ditt abonnemang",
+    last_test: "Senaste test {when}",
     internet: "Internethastighet",
     download: "Nedladdning",
     upload: "Uppladdning",
@@ -768,6 +795,8 @@ const STRINGS = {
     unavailable: "Otillgänglig",
   },
   bg: {
+    of_plan: "{p} % от вашия план",
+    last_test: "Последен тест {when}",
     internet: "Скорост на интернета",
     download: "Изтегляне",
     upload: "Качване",
@@ -824,6 +853,8 @@ const STRINGS = {
     unavailable: "Недостъпно",
   },
   ru: {
+    of_plan: "{p} % от вашего тарифа",
+    last_test: "Последний тест {when}",
     internet: "Скорость интернета",
     download: "Загрузка",
     upload: "Отдача",
@@ -880,6 +911,8 @@ const STRINGS = {
     unavailable: "Недоступно",
   },
   uk: {
+    of_plan: "{p} % від вашого тарифу",
+    last_test: "Останній тест {when}",
     internet: "Швидкість інтернету",
     download: "Завантаження",
     upload: "Відвантаження",
@@ -936,6 +969,8 @@ const STRINGS = {
     unavailable: "Недоступно",
   },
   hu: {
+    of_plan: "Az előfizetés {p} %-a",
+    last_test: "Utolsó mérés {when}",
     internet: "Internetsebesség",
     download: "Letöltés",
     upload: "Feltöltés",
@@ -992,6 +1027,8 @@ const STRINGS = {
     unavailable: "Nem elérhető",
   },
   sk: {
+    of_plan: "{p} % vášho programu",
+    last_test: "Posledný test {when}",
     internet: "Rýchlosť internetu",
     download: "Sťahovanie",
     upload: "Odosielanie",
@@ -1048,6 +1085,8 @@ const STRINGS = {
     unavailable: "Nedostupné",
   },
   cs: {
+    of_plan: "{p} % vašeho tarifu",
+    last_test: "Poslední test {when}",
     internet: "Rychlost internetu",
     download: "Stahování",
     upload: "Odesílání",
@@ -1104,6 +1143,8 @@ const STRINGS = {
     unavailable: "Nedostupné",
   },
   sl: {
+    of_plan: "{p} % vašega paketa",
+    last_test: "Zadnji test {when}",
     internet: "Hitrost interneta",
     download: "Prenos",
     upload: "Nalaganje",
@@ -1160,6 +1201,8 @@ const STRINGS = {
     unavailable: "Ni na voljo",
   },
   lv: {
+    of_plan: "{p} % no jūsu plāna",
+    last_test: "Pēdējais tests {when}",
     internet: "Interneta ātrums",
     download: "Lejupielāde",
     upload: "Augšupielāde",
@@ -1216,6 +1259,8 @@ const STRINGS = {
     unavailable: "Nav pieejams",
   },
   el: {
+    of_plan: "{p} % του πακέτου σας",
+    last_test: "Τελευταία μέτρηση {when}",
     internet: "Ταχύτητα internet",
     download: "Λήψη",
     upload: "Αποστολή",
@@ -1482,6 +1527,45 @@ const BASE_STYLE = `
   .ring-svg circle { fill: none; }
   .ring-svg .track { stroke: color-mix(in srgb, var(--c, var(--st-accent)) 18%, transparent); }
   .ring-svg .prog { stroke: var(--c, var(--st-accent)); stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+  /* Hero, as on the garden and tempo cards: a flat illustration on the left, a big value and a few colored lines on the right. */
+  .hero { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .hero-art { flex: none; width: 120px; display: grid; place-items: center; }
+  .hero-art svg { width: 100%; height: auto; display: block; }
+  .hero-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+  .hero-kick { font-size: 12px; color: var(--secondary-text-color); }
+  .big { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+  .big .icon { width: 24px; height: 24px; align-self: center; color: var(--c, var(--st-accent)); }
+  .big b { font-size: 30px; font-weight: 400; line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .big span { font-size: 14px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hero .line { font-size: 12.5px; }
+  /* Rows, as the watering zones: a round icon (grey at rest, tinted otherwise, a ring while it runs), name, colored state, a button. */
+  .row { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .row-icon { position: relative; width: 40px; height: 40px; border-radius: 50%; flex: none; display: grid; place-items: center;
+              --t: var(--c, var(--st-idle)); background: color-mix(in srgb, var(--t) 18%, transparent); color: color-mix(in srgb, var(--t) 70%, var(--primary-text-color)); }
+  .row-icon.idle { background: color-mix(in srgb, var(--primary-text-color) 8%, transparent); color: var(--secondary-text-color); }
+  .row-icon > .icon, .row-icon > ha-icon { width: 22px; height: 22px; --mdc-icon-size: 22px; }
+  .row-icon .ring-svg { inset: -2px; width: 44px; height: 44px; }
+  .badge { position: absolute; right: -3px; bottom: -3px; width: 17px; height: 17px; border-radius: 50%; display: grid; place-items: center;
+           background: var(--b, var(--st-ok)); color: #fff; box-shadow: 0 0 0 2px var(--ha-card-background, var(--card-background-color, #fff)); }
+  .badge .icon { width: 11px; height: 11px; }
+  .row-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .row-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row-state { font-size: 12.5px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row-state.ok, .row-state.warn, .row-state.crit, .row-state.active, .row-state.accent { color: color-mix(in srgb, var(--c) 60%, var(--primary-text-color)); }
+  .rows { display: flex; flex-direction: column; gap: 8px; }
+  /* Tiles, as on room overview: grey, tinted with a border when they need a look; small badges below. */
+  .tiles { display: grid; gap: 8px; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); }
+  .tile { min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 10px; box-sizing: border-box;
+          background: var(--secondary-background-color, rgba(127,127,127,.12)); border: 1px solid transparent; }
+  .tile.tint { background: color-mix(in srgb, var(--c) 13%, var(--secondary-background-color, rgba(127,127,127,.12)));
+               border-color: color-mix(in srgb, var(--c) 30%, transparent); }
+  .tile-head { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .tile .row-icon { width: 30px; height: 30px; } .tile .row-icon > .icon { width: 18px; height: 18px; }
+  .tile .row-state { font-size: 12px; }
+  .badges { display: flex; gap: 4px; flex-wrap: wrap; }
+  .pill { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; padding: 1px 7px; border-radius: 10px;
+          color: color-mix(in srgb, var(--c, var(--st-idle)) 60%, var(--primary-text-color)); background: color-mix(in srgb, var(--c, var(--st-idle)) 14%, transparent); }
+  .pill .icon { width: 14px; height: 14px; color: var(--c, var(--st-idle)); }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
   @container (max-width: 230px) {
     .chip { padding: 4px; flex: none; }
@@ -2179,8 +2263,24 @@ const register = (cards, url) => {
 // Discovery
 // ---------------------------------------------------------------------------
 
-// A data rate in Mbit/s from a sensor (its unit: bit/s, kbit/s, Mbit/s, Gbit/s, or bytes per second).
-const UNIT_MBPS = { "bit/s": 1e-6, "kbit/s": 1e-3, "mbit/s": 1, "gbit/s": 1e3, "b/s": 8e-6, "kb/s": 8e-3, "mb/s": 8, "gb/s": 8e3, mbps: 1, kbps: 1e-3, gbps: 1e3 };
+// A data rate in Mbit/s from a sensor, whatever Home Assistant data-rate unit it has: bits (bit/s, kbit/s, Mbit/s, Gbit/s),
+// bytes (B/s, kB/s, MB/s, GB/s) or binary bytes (KiB/s, MiB/s, GiB/s). Units are compared in lower case.
+const UNIT_MBPS = {
+  "bit/s": 1e-6,
+  "kbit/s": 1e-3,
+  "mbit/s": 1,
+  "gbit/s": 1e3,
+  "b/s": 8e-6,
+  "kb/s": 8e-3,
+  "mb/s": 8,
+  "gb/s": 8e3,
+  "kib/s": (8 * 1024) / 1e6,
+  "mib/s": (8 * 1024 ** 2) / 1e6,
+  "gib/s": (8 * 1024 ** 3) / 1e6,
+  mbps: 1,
+  kbps: 1e-3,
+  gbps: 1e3,
+};
 const toMbps = (s) => {
   const v = num(s);
   if (v === null) return null;
@@ -2190,19 +2290,22 @@ const toMbps = (s) => {
 
 // The sensors of a speed test among a list of registry entries: download, upload, ping, jitter, packet loss, server,
 // ISP, time of the last test, and the button that runs a test.
-const NOT_MAIN = /latency|jitter|avg|average|min|max|elapsed|bytes|percent|pct|iqm|low|high|total/;
+const NOT_MAIN = /latency|jitter|avg|average|min|max|elapsed|bytes|percent|pct|iqm|low|high|total|today|yesterday|week|month/;
+// Buttons of a device that are not a speed test (a router's restart, a firmware update…).
+const NOT_RUN = /restart|reboot|firmware|update|reset|shutdown|power/;
 const findSensors = (hass, list) => {
   const sensor = (re, not) => pick(hass, list, "sensor", re, (e) => !not?.test(keyText(e, hass)));
   return {
-    download: sensor(/download/, NOT_MAIN),
-    upload: sensor(/upload/, NOT_MAIN),
-    ping: sensor(/ping|latency/, /download|upload|low|high|avg|average|min|max|jitter|iqm/),
+    // A Netgear router's speed test: downlink_bandwidth, uplink_bandwidth and average_ping, beside its traffic counters.
+    download: sensor(/downlink_bandwidth/) ?? sensor(/download/, NOT_MAIN),
+    upload: sensor(/uplink_bandwidth/) ?? sensor(/upload/, NOT_MAIN),
+    ping: sensor(/average_ping/) ?? sensor(/ping|latency/, /download|upload|low|high|avg|average|min|max|jitter|iqm/),
     jitter: sensor(/jitter/, /download|upload/),
     loss: sensor(/packet_loss|loss/),
     server: sensor(/server/, /id$|_id_|host/),
     isp: sensor(/(^|_)isp(_|$)/),
     last: sensor(/last_test|last_result|last_run|date_last/),
-    button: pick(hass, list, "button", /run|test|start|speedtest/),
+    button: pick(hass, list, "button", /run|test|start|speedtest/, (e) => !NOT_RUN.test(keyText(e, hass))),
   };
 };
 
@@ -2244,14 +2347,16 @@ const resolve = (hass, config) => {
         if (!groups.has(k)) groups.set(k, []);
         groups.get(k).push(e);
       }
+      // The first device with a download sensor: a router (Netgear) also has a device for each client it tracks.
       const want = config.device;
-      const key = [...groups.keys()].find((k) => !want || k === want || devName(hass.devices?.[k]) === want);
-      if (key === undefined) continue;
-      const list = key === "none" ? groups.get(key) : byDevice(hass).get(key) || groups.get(key);
-      const found = findSensors(hass, list);
-      if (!found.download) continue;
-      out = { platform, ...found, button: config.button ?? found.button };
-      break;
+      for (const key of [...groups.keys()].filter((k) => !want || k === want || devName(hass.devices?.[k]) === want)) {
+        const list = key === "none" ? groups.get(key) : byDevice(hass).get(key) || groups.get(key);
+        const found = findSensors(hass, list);
+        if (!found.download) continue;
+        out = { platform, ...found, button: config.button ?? found.button };
+        break;
+      }
+      if (out) break;
     }
   }
   if (out) out.name = out.platform ? PLATFORMS[out.platform].name : null;
@@ -2284,26 +2389,25 @@ const niceMax = (v) => {
 // ---------------------------------------------------------------------------
 
 const SPEED_STYLE = `
-  .hero { display: flex; gap: 18px; align-items: center; }
-  .gauge { position: relative; width: 170px; height: 104px; flex: none; }
-  .gauge svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-  .gauge .arc-bg { stroke: color-mix(in srgb, var(--c, var(--st-accent)) 16%, transparent); }
+  .hero-art.gauge { width: 120px; }
+  .gauge .track { stroke: color-mix(in srgb, var(--primary-text-color) 12%, transparent); }
   .gauge .arc { stroke: var(--c, var(--st-accent)); transition: stroke-dashoffset .6s ease; }
-  .gauge .needle { transform-box: view-box; transform-origin: 85px 85px; }
-  .gauge.testing .needle { animation: st-sweep 1.6s ease-in-out infinite alternate; }
+  .gauge .mark { stroke: var(--secondary-text-color); }
+  .gauge .needle { transform-box: view-box; transform-origin: 60px 70px; transition: transform .6s ease; }
+  .gauge .needle line { stroke: var(--primary-text-color); opacity: .75; }
+  .gauge .hub { fill: var(--primary-text-color); opacity: .75; }
+  .gauge .box { fill: color-mix(in srgb, var(--primary-text-color) 7%, transparent); stroke: color-mix(in srgb, var(--primary-text-color) 22%, transparent); }
+  .gauge .led { fill: var(--st-ok); } .gauge.testing .led.blink { fill: var(--st-warn); }
   .gauge.testing .arc { opacity: .35; }
-  @keyframes st-sweep { from { transform: rotate(-90deg); } to { transform: rotate(90deg); } }
-  .gauge .val { position: absolute; left: 0; right: 0; top: 42px; text-align: center; line-height: 1; }
-  .gauge .val b { font-size: 32px; font-weight: 400; }
-  .gauge .val small { display: block; font-size: 12px; color: var(--secondary-text-color); margin-top: 4px; }
-  .stats { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-  .stat { display: flex; align-items: baseline; gap: 8px; font-size: 13px; color: var(--secondary-text-color); min-width: 0; }
-  .stat .icon { width: 16px; height: 16px; align-self: center; }
-  .stat b { font-size: 18px; font-weight: 400; color: var(--primary-text-color); white-space: nowrap; }
-  .stat .lbl { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .stat.warn b, .stat.crit b { color: color-mix(in srgb, var(--c) 50%, var(--primary-text-color)); }
+  .gauge.testing .needle { animation: st-sweep 1.6s ease-in-out infinite alternate; }
+  .gauge.testing .led.blink { animation: st-blink .8s steps(2, jump-none) infinite; }
+  @keyframes st-sweep { from { transform: rotate(0deg); } to { transform: rotate(180deg); } }
+  @keyframes st-blink { from { opacity: 1; } to { opacity: .2; } }
+  .big.accent .icon { color: var(--st-accent); }
+  .big.warn b, .big.crit b { color: color-mix(in srgb, var(--c) 60%, var(--primary-text-color)); }
   .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
-  .chart .dl { stroke: var(--st-accent); } .chart .ul { stroke: #7e57c2; }
+  .chart .dl { stroke: var(--st-accent); } .chart .area { fill: var(--st-accent); fill-opacity: .12; }
+  .chart .ul { stroke: var(--st-active); }
   .chart .grid { stroke: var(--divider-color, rgba(127,127,127,.25)); }
   .chart .plan { stroke: var(--secondary-text-color); stroke-dasharray: 4 4; }
   .chart .dip { fill: var(--st-warn); }
@@ -2312,30 +2416,24 @@ const SPEED_STYLE = `
   .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--secondary-text-color); margin-top: 6px; align-items: center; }
   .legend .k { display: inline-flex; align-items: center; gap: 6px; }
   .legend .sw { width: 14px; height: 3px; border-radius: 2px; background: var(--c); }
-  .legend .dipnote { margin-left: auto; color: color-mix(in srgb, var(--st-warn) 50%, var(--primary-text-color)); display: inline-flex; gap: 4px; align-items: center; }
+  .legend .dipnote { margin-left: auto; color: color-mix(in srgb, var(--st-warn) 60%, var(--primary-text-color)); display: inline-flex; gap: 4px; align-items: center; }
   .legend .dipnote .icon { width: 14px; height: 14px; color: var(--st-warn); }
-  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
-  .tile { background: var(--secondary-background-color, rgba(127,127,127,.1)); border-radius: 12px; padding: 8px 10px; min-width: 0; }
-  .tile .k { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tile .v { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .runbar { display: flex; }
-  .runbar .btn { flex: 1; padding: 10px 12px; }
+  .tile .row-name small { font-size: 11px; font-weight: 400; color: var(--secondary-text-color); margin-left: 3px; }
+  .foot { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .foot .note { font-size: 12px; color: var(--secondary-text-color); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .spin .icon { animation: st-spin 1s linear infinite; }
   @keyframes st-spin { to { transform: rotate(360deg); } }
-  .mini .big { display: flex; align-items: baseline; gap: 6px; color: color-mix(in srgb, var(--c, var(--st-accent)) 55%, var(--primary-text-color)); }
-  .mini .big b { font-size: 26px; font-weight: 400; }
-  .mini .big .icon { width: 20px; height: 20px; align-self: center; color: var(--c, var(--st-accent)); }
-  .mini .info { flex: 0 1 auto; }
-  .spark { flex: 1 1 60px; min-width: 40px; max-width: 160px; height: 34px; margin-left: auto; }
-  .spark svg { width: 100%; height: 100%; }
-  .spark polyline { stroke: var(--st-accent); }
+  .mini .hero-art.gauge { width: 76px; }
+  .mini .big b { font-size: 26px; }
   @container (max-width: 300px) {
     .hero { flex-direction: column; align-items: stretch; gap: 8px; }
-    .gauge { align-self: center; }
+    .hero-art.gauge { align-self: center; }
+    .tiles { --cols: 1 !important; }
+    .foot .note { display: none; }
     .legend .dipnote { margin-left: 0; }
   }
   @container (max-width: 200px) {
-    .spark { display: none; }
+    .mini .hero-art.gauge { display: none; }
   }
 `;
 
@@ -2460,31 +2558,46 @@ class SpeedtestCard extends CardBase {
     return this._header({ icon: ICONS.gauge, cls: sum.status.cls === "ok" ? "accent" : sum.status.cls, title: this._config.title || this._t("internet"), sub, chip: sum.status });
   }
 
-  // The half-circle gauge of the download speed, its value inside; a needle sweeps it while a test runs.
+  // The gauge, a flat illustration: the download speed on a half dial with the plan's mark, a needle on it (it sweeps
+  // the dial while a test runs) and a box whose light blinks during the test.
   _gauge(m, sum) {
-    const r = 70;
+    const r = 44;
     const len = Math.PI * r;
     const p = sum.dl === null ? 0 : clamp(sum.dl / sum.max, 0, 1);
     const cls = sum.status.cls === "warn" || sum.status.cls === "crit" ? sum.status.cls : "accent";
-    return `<div class="gauge ${cls}${sum.testing ? " testing" : ""} clickable"${moreInfo(m.download)} aria-label="${esc(`${this._t("download")} ${this._speed(sum.dl)} ${this._t("mbps")}`)}">
-      <svg viewBox="0 0 170 104" aria-hidden="true">
-        <path class="arc-bg" d="M15 85 A${r} ${r} 0 0 1 155 85" fill="none" stroke-width="12" stroke-linecap="round"/>
-        <path class="arc" d="M15 85 A${r} ${r} 0 0 1 155 85" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="${len.toFixed(1)}" style="stroke-dashoffset:${(len * (1 - p)).toFixed(1)}"/>
-        ${sum.testing ? `<g class="needle"><circle cx="85" cy="15" r="8" fill="var(--st-accent)" stroke="var(--card-background-color, #fff)" stroke-width="3"/></g>` : ""}
-      </svg>
-      <div class="val"><b class="num">${esc(this._speed(sum.dl))}</b><small>${esc(this._t("mbps"))} ↓</small></div>
-    </div>`;
+    const pt = (f, rr) => [60 - rr * Math.cos(Math.PI * f), 70 - rr * Math.sin(Math.PI * f)].map((v) => v.toFixed(1));
+    const mark = sum.plan && sum.plan < sum.max ? (() => { const f = clamp(sum.plan / sum.max, 0, 1); const [x1, y1] = pt(f, r - 8); const [x2, y2] = pt(f, r + 8); return `<line class="mark" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke-width="2"/>`; })() : "";
+    const deg = sum.testing ? 0 : p * 180;
+    return `<div class="hero-art gauge ${cls}${sum.testing ? " testing" : ""} clickable"${moreInfo(m.download)} aria-label="${esc(`${this._t("download")} ${this._speed(sum.dl)} ${this._t("mbps")}`)}">
+      <svg viewBox="0 0 120 100" aria-hidden="true">
+        <path class="track" d="M16 70 A${r} ${r} 0 0 1 104 70" fill="none" stroke-width="10" stroke-linecap="round"/>
+        <path class="arc" d="M16 70 A${r} ${r} 0 0 1 104 70" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="${len.toFixed(1)}" style="stroke-dashoffset:${(len * (1 - p)).toFixed(1)}"/>
+        ${mark}
+        <g class="needle" style="transform: rotate(${deg.toFixed(1)}deg)"><line x1="60" y1="70" x2="26" y2="70" stroke-width="4" stroke-linecap="round"/></g>
+        <circle class="hub" cx="60" cy="70" r="6"/>
+        <rect class="box" x="36" y="84" width="48" height="12" rx="4"/>
+        <circle class="led" cx="46" cy="90" r="2"/><circle class="led" cx="54" cy="90" r="2"/><circle class="led blink" cx="62" cy="90" r="2"/>
+      </svg></div>`;
   }
 
-  _stats(m, sum) {
-    const row = (icon, label, value, unit, entity, cls = "") =>
-      `<div class="stat ${cls}${entity ? " clickable" : ""}"${moreInfo(entity)}>${svgIcon(icon)}<span class="lbl">${esc(label)}</span><b class="num">${esc(value)}</b><span>${esc(unit)}</span></div>`;
-    const out = [];
-    if (m.upload) out.push(row(ICONS.upload, this._t("upload"), this._speed(sum.ul), this._t("mbps"), m.upload));
-    if (m.ping) out.push(row(ICONS.ping, this._t("ping"), this._ms(sum.ping), this._t("ms"), m.ping, sum.status.entity === m.ping ? "warn" : ""));
-    if (m.jitter) out.push(row(ICONS.jitter, this._t("jitter"), this._ms(sum.jitter), this._t("ms"), m.jitter));
-    if (m.loss) out.push(row(ICONS.loss, this._t("loss"), this._ms(sum.loss), "%", m.loss));
-    return `<div class="stats">${out.join("")}</div>`;
+  // The big download speed and the lines beside the gauge: upload, ping (and jitter, loss), share of the plan.
+  _heroBody(m, sum) {
+    const cls = sum.status.cls === "warn" || sum.status.cls === "crit" ? sum.status.cls : "accent";
+    const lines = [`<div class="big ${cls}">${svgIcon(ICONS.download)}<b>${esc(this._speed(sum.dl))}</b><span>${esc(this._t("mbps"))}</span></div>`];
+    const ln = (icon, text, entity, c = "") => `<div class="line ${c}${entity ? " clickable" : ""}"${moreInfo(entity)}>${svgIcon(icon)}<span>${esc(text)}</span></div>`;
+    if (m.upload) lines.push(ln(ICONS.upload, `${this._speed(sum.ul)} ${this._t("mbps")} · ${this._t("upload")}`, m.upload, "active"));
+    const pingBits = [];
+    if (m.ping) pingBits.push(`${this._ms(sum.ping)} ${this._t("ms")} ${this._t("ping")}`);
+    if (m.jitter) pingBits.push(`${this._ms(sum.jitter)} ${this._t("ms")} ${this._t("jitter")}`);
+    if (m.loss) pingBits.push(`${this._ms(sum.loss)} % ${this._t("loss")}`);
+    if (pingBits.length) lines.push(ln(ICONS.ping, pingBits.join(" · "), m.ping || m.jitter || m.loss, sum.status.entity === m.ping && m.ping ? "warn" : ""));
+    // The share of the plan, coloured by the download speed alone: a high ping does not make the speed slow.
+    if (sum.plan && sum.dl !== null) {
+      const slow = sum.dl < sum.plan * sum.ratio;
+      lines.push(ln(slow ? ICONS.alert : ICONS.check, this._t("of_plan", { p: Math.round((sum.dl / sum.plan) * 100) }), null, sum.testing ? "" : slow ? "warn" : "ok"));
+    }
+    else if (sum.status.cls !== "ok") lines.push(ln(ICONS.alert, sum.status.text, sum.status.entity, sum.status.cls));
+    return `<div class="hero-body">${lines.join("")}</div>`;
   }
 
   // The lines of the download and upload speeds over the window, the plan's dashed line and the slowest test.
@@ -2499,7 +2612,9 @@ class SpeedtestCard extends CardBase {
     const top = Math.max(sum.plan || 0, ...h.dl.map((p) => p.v), ...h.ul.map((p) => p.v)) * 1.1;
     const x = (t) => ((t - start) / (end - start)) * W;
     const y = (v) => H - 4 - (clamp(v, 0, top) / top) * (H - 16);
-    const line = (pts, cls) => `<polyline class="${cls}" points="${pts.map((p) => `${x(p.t).toFixed(1)},${y(p.v).toFixed(1)}`).join(" ")}" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`;
+    const xy = (pts) => pts.map((p) => `${x(p.t).toFixed(1)},${y(p.v).toFixed(1)}`).join(" ");
+    const line = (pts, cls) => `<polyline class="${cls}" points="${xy(pts)}" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`;
+    const area = `<polygon class="area" points="${x(h.dl[0].t).toFixed(1)},${H} ${xy(h.dl)} ${x(h.dl[h.dl.length - 1].t).toFixed(1)},${H}"/>`;
     const grid = [0.25, 0.5, 0.75].map((f) => `<line class="grid" x1="0" x2="${W}" y1="${y(top * f).toFixed(1)}" y2="${y(top * f).toFixed(1)}" stroke-width="1"/>`).join("");
     const plan = sum.plan ? `<line class="plan" x1="0" x2="${W}" y1="${y(sum.plan).toFixed(1)}" y2="${y(sum.plan).toFixed(1)}" stroke-width="1"/><text x="${W}" y="${(y(sum.plan) - 4).toFixed(1)}" text-anchor="end">${esc(this._t("plan", { speed: `${this._speed(sum.plan)} ${this._t("mbps")}` }))}</text>` : "";
     const low = h.dl.reduce((a, b) => (b.v < a.v ? b : a));
@@ -2507,35 +2622,40 @@ class SpeedtestCard extends CardBase {
     const dip = dipped ? `<circle class="dip" cx="${x(low.t).toFixed(1)}" cy="${y(low.v).toFixed(1)}" r="4"/>` : "";
     const days = [];
     for (let i = h.days - 1; i >= 0; i--) days.push(new Intl.DateTimeFormat(this._locale(), { weekday: "short" }).format(new Date(end - i * DAY_MS)));
-    const legend = `<div class="legend"><span class="k accent" style="--c: var(--st-accent)"><span class="sw"></span>${esc(this._t("download"))}</span>${h.ul.length ? `<span class="k" style="--c: #7e57c2"><span class="sw"></span>${esc(this._t("upload"))}</span>` : ""}${
+    const legend = `<div class="legend"><span class="k accent" style="--c: var(--st-accent)"><span class="sw"></span>${esc(this._t("download"))}</span>${h.ul.length ? `<span class="k" style="--c: var(--st-active)"><span class="sw"></span>${esc(this._t("upload"))}</span>` : ""}${
       dipped ? `<span class="dipnote">${svgIcon(ICONS.alert)}${esc(this._t("dip", { speed: `${this._speed(low.v)} ${this._t("mbps")}`, when: fmtWhen(this._hass, this._config, low.t) }))}</span>` : ""
     }</div>`;
-    return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(this._t("history"))}">${grid}${plan}${h.ul.length > 1 ? line(h.ul, "ul") : ""}${line(h.dl, "dl")}${dip}</svg>
+    return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(this._t("history"))}">${grid}${area}${plan}${h.ul.length > 1 ? line(h.ul, "ul") : ""}${line(h.dl, "dl")}${dip}</svg>
       <div class="xaxis">${days.map((d) => `<span>${esc(d)}</span>`).join("")}</div>${legend}</div>`;
   }
 
-  _tiles(m) {
+  // Tiles as on the room overview: average and slowest download of the window (tinted when the slowest is slow), the
+  // server and the provider.
+  _tiles(m, sum) {
     const h = this._history;
-    const tile = (k, v, entity) => `<div class="tile${entity ? " clickable" : ""}"${moreInfo(entity)}><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`;
+    const tile = (icon, value, unit, label, entity, c = "") =>
+      `<div class="tile${c ? ` tint ${c}` : ""}${entity ? " clickable" : ""}"${moreInfo(entity)}><div class="tile-head"><div class="row-icon${c ? "" : " idle"}">${svgIcon(icon)}</div><div class="row-text"><div class="row-name">${esc(value)}${unit ? `<small>${esc(unit)}</small>` : ""}</div><div class="row-state${c ? ` ${c}` : ""}">${esc(label)}</div></div></div></div>`;
     const out = [];
     if (h?.dl.length) {
       const vals = h.dl.map((p) => p.v);
-      out.push(tile(this._t("average"), `${this._speed(vals.reduce((a, b) => a + b, 0) / vals.length)} ${this._t("mbps")}`, m.download));
-      out.push(tile(this._t("slowest"), `${this._speed(Math.min(...vals))} ${this._t("mbps")}`, m.download));
+      const low = Math.min(...vals);
+      out.push(tile(ICONS.download, this._speed(vals.reduce((a, b) => a + b, 0) / vals.length), this._t("mbps"), this._t("average"), m.download));
+      out.push(tile(ICONS.download, this._speed(low), this._t("mbps"), this._t("slowest"), m.download, sum.reference && low < sum.reference * sum.ratio ? "warn" : ""));
     }
     const srv = m.server ? this._s(m.server)?.state : this._s(m.ping || m.download)?.attributes?.server_name;
     const country = m.server ? null : this._s(m.ping || m.download)?.attributes?.server_country;
     const isp = m.isp ? this._s(m.isp)?.state : null;
-    if (srv && valid({ state: srv })) out.push(tile(this._t("server"), [srv, country].filter(Boolean).join(", "), m.server || m.ping));
-    if (isp && valid({ state: isp })) out.push(tile(this._t("isp"), isp, m.isp));
-    return out.length ? `<div class="tiles">${out.join("")}</div>` : "";
+    if (srv && valid({ state: srv })) out.push(tile(ICONS.server, [srv, country].filter(Boolean).join(", "), "", this._t("server"), m.server || m.ping));
+    if (isp && valid({ state: isp })) out.push(tile(ICONS.server, isp, "", this._t("isp"), m.isp));
+    return out.length ? `<div class="tiles" style="--cols: ${Math.min(out.length, 3)}">${out.join("")}</div>` : "";
   }
 
   // How a test is run here: the configured or found button, else the integration's own way; null when none.
   _runCall(m) {
     if (m.button) return ["button", "press", { entity_id: m.button }];
     const run = PLATFORMS[m.platform]?.run;
-    if (Array.isArray(run)) return run;
+    // A service; "download" for its data targets the download sensor's speed test only (Ookla: one test per server).
+    if (Array.isArray(run)) return [run[0], run[1], run[2] === "download" ? { entity_id: m.download } : run[2]];
     if (run === "update") return ["homeassistant", "update_entity", { entity_id: m.download }];
     return null;
   }
@@ -2543,8 +2663,8 @@ class SpeedtestCard extends CardBase {
   _runButton(m, sum, round = false) {
     if (this._config.show_run === false || !this._runCall(m)) return "";
     const label = sum.testing ? this._t("testing") : this._t("run_test");
-    if (round) return `<button class="btn round primary${sum.testing ? " spin" : ""}" data-action="run" title="${esc(label)}" aria-label="${esc(label)}"${sum.testing ? " disabled" : ""}>${svgIcon(ICONS.refresh)}</button>`;
-    return `<div class="runbar"><button class="btn primary${sum.testing ? " spin" : ""}" data-action="run"${sum.testing ? " disabled" : ""}>${svgIcon(ICONS.refresh)}<span>${esc(label)}</span></button></div>`;
+    const cls = `btn${round ? " round" : ""}${sum.testing ? " active spin" : ""}`;
+    return `<button class="${cls}" data-action="run" title="${esc(label)}" aria-label="${esc(label)}"${sum.testing ? " disabled" : ""}>${svgIcon(sum.testing ? ICONS.refresh : ICONS.play)}${round ? "" : `<span>${esc(label)}</span>`}</button>`;
   }
 
   _action(action) {
@@ -2580,10 +2700,11 @@ class SpeedtestCard extends CardBase {
     if (error) return error;
     const c = this._config;
     const sum = this._summary(m);
-    const parts = [`<div class="hero">${this._gauge(m, sum)}${this._stats(m, sum)}</div>`];
+    const parts = [`<div class="hero">${this._gauge(m, sum)}${this._heroBody(m, sum)}</div>`];
     if (c.show_history !== false) parts.push(this._section("history", ICONS.chart, this._t("last_days", { n: Number(c.history_days) || 7 }), "", this._chart(sum)));
-    if (c.show_stats !== false) parts.push(this._tiles(m));
-    parts.push(this._runButton(m, sum));
+    if (c.show_stats !== false) parts.push(this._tiles(m, sum));
+    const run = this._runButton(m, sum);
+    if (run) parts.push(`<div class="foot">${run}${sum.last ? `<span class="note">${esc(this._t("last_test", { when: fmtRelative(this._hass, this._config, sum.last) }))}</span>` : ""}</div>`);
     return `<style>${BASE_STYLE}${SPEED_STYLE}</style>
       <ha-card>
         ${this._head(sum, this._subtitle(m, sum))}
@@ -2597,33 +2718,23 @@ class SpeedtestMiniCard extends withMini(SpeedtestCard) {
     return document.createElement("speedtest-mini-card-editor");
   }
 
-  _spark() {
-    const pts = this._history?.dl || [];
-    if (pts.length < 2) return "";
-    const t0 = pts[0].t;
-    const t1 = pts[pts.length - 1].t;
-    const lo = Math.min(...pts.map((p) => p.v));
-    const hi = Math.max(...pts.map((p) => p.v));
-    const xy = pts.map((p) => `${(((p.t - t0) / (t1 - t0 || 1)) * 200).toFixed(1)},${(32 - ((p.v - lo) / (hi - lo || 1)) * 28).toFixed(1)}`).join(" ");
-    return `<div class="spark"><svg viewBox="0 0 200 34" preserveAspectRatio="none" aria-hidden="true"><polyline points="${xy}" fill="none" stroke-width="2" vector-effect="non-scaling-stroke"/></svg></div>`;
-  }
-
   _renderMini() {
     const { m, error } = this._ready();
     if (error) return error;
     const sum = this._summary(m);
     const cls = sum.status.cls === "warn" || sum.status.cls === "crit" ? sum.status.cls : "accent";
     const second = [m.upload ? `${this._speed(sum.ul)} ${this._t("mbps")}` : null, m.ping ? `${this._ms(sum.ping)} ${this._t("ms")}` : null].filter(Boolean).join(" · ");
+    const run = this._runButton(m, sum, true);
     return `<style>${BASE_STYLE}${SPEED_STYLE}${MINI_STYLE}</style>
       <ha-card>
         ${this._head(sum, "")}
         <div class="content mini">
+          ${this._gauge(m, sum)}
           <div class="info">
-            <div class="big ${cls} clickable"${moreInfo(m.download)}>${svgIcon(ICONS.download)}<b class="num">${esc(this._speed(sum.dl))}</b><span>${esc(this._t("mbps"))}</span></div>
-            ${second ? `<div class="line">${svgIcon(ICONS.upload)}<span>${esc(second)}</span></div>` : ""}
+            <div class="big ${cls} clickable"${moreInfo(m.download)}>${svgIcon(ICONS.download)}<b>${esc(this._speed(sum.dl))}</b><span>${esc(this._t("mbps"))}</span></div>
+            ${second ? `<div class="line active">${svgIcon(ICONS.upload)}<span>${esc(second)}</span></div>` : ""}
           </div>
-          ${this._spark()}
-          ${this._runButton(m, sum, true) ? `<div class="controls">${this._runButton(m, sum, true)}</div>` : ""}
+          ${run ? `<div class="controls">${run}</div>` : ""}
         </div>
       </ha-card>`;
   }

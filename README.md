@@ -15,10 +15,11 @@
   <img src="https://raw.githubusercontent.com/juju35/ha-speedtest-card/main/images/fastdotcom.png" alt="Fast.com" width="64">&nbsp;&nbsp;
   <img src="https://raw.githubusercontent.com/juju35/ha-speedtest-card/main/images/iperf3.png" alt="iperf3" width="64">&nbsp;&nbsp;
   <img src="https://raw.githubusercontent.com/juju35/ha-speedtest-card/main/images/ookla_speedtest.png" alt="Ookla Speedtest" width="64">&nbsp;&nbsp;
-  <img src="https://raw.githubusercontent.com/juju35/ha-speedtest-card/main/images/speedtest_tracker.png" alt="Speedtest Tracker" width="64">
+  <img src="https://raw.githubusercontent.com/juju35/ha-speedtest-card/main/images/speedtest_tracker.png" alt="Speedtest Tracker" width="64">&nbsp;&nbsp;
+  <img src="https://raw.githubusercontent.com/juju35/ha-speedtest-card/main/images/netgear.png" alt="Netgear" width="64">
 </p>
 
-Lovelace cards for Home Assistant for your **internet speed tests**: a **gauge** of the download speed against your plan, the **upload**, **ping**, **jitter** and **packet loss**, a **7-day history** read from the recorder with your plan's line and the **slowest test**, and a button that **runs a test**, from [Speedtest.net](https://www.home-assistant.io/integrations/speedtestdotnet/), [Fast.com](https://www.home-assistant.io/integrations/fastdotcom/), [iperf3](https://www.home-assistant.io/integrations/iperf3/), [Ookla Speedtest](https://github.com/soulripper13/hass-speedtest-ookla) or [Speedtest Tracker](https://github.com/metaathron/ha-speedtest-tracker).
+Lovelace cards for Home Assistant for your **internet speed tests**: a **gauge** of the download speed against your plan, the **upload**, **ping**, **jitter** and **packet loss**, a **7-day history** read from the recorder with your plan's line and the **slowest test**, and a button that **runs a test**, from [Speedtest.net](https://www.home-assistant.io/integrations/speedtestdotnet/), [Fast.com](https://www.home-assistant.io/integrations/fastdotcom/), [iperf3](https://www.home-assistant.io/integrations/iperf3/), [Ookla Speedtest](https://github.com/soulripper13/hass-speedtest-ookla), [Speedtest Tracker](https://github.com/metaathron/ha-speedtest-tracker) or a [Netgear](https://www.home-assistant.io/integrations/netgear/) router's speed test.
 
 The sensors are **discovered automatically** from the Home Assistant entity and device registries: an empty configuration already shows your speed test, whatever your Home Assistant language or entity ids. Any download, upload and ping sensors can also be set in the configuration.
 
@@ -31,11 +32,11 @@ The sensors are **discovered automatically** from the Home Assistant entity and 
 ## Features
 
 - Two cards: a full **Speedtest Card** (`custom:speedtest-card`) and a compact **Speedtest Mini Card** (`custom:speedtest-mini-card`)
-- **Download gauge**: a half circle filled up to your plan's speed (`plan_download`; without a plan, a round scale above the week's best), the speed inside
-- **Upload, ping, jitter and packet loss** next to it, when the integration gives them
+- **Download gauge**, drawn as an illustration: a half dial filled up to your plan's speed (`plan_download`, marked on the dial; without a plan, a round scale above the week's best) with its needle, the speed in large next to it
+- **Upload, ping, jitter and packet loss** in colored lines beside it, when the integration gives them, and the **share of your plan** reached
 - **History** of the last 7 days (`history_days`) from the recorder: download and upload lines, your plan as a dashed line, the **slowest test** marked and named ("Slowest 312 Mbit/s Fri 9:00 PM")
-- Average and slowest download of the period, the test **server** (and the provider, when known)
-- **Run a test** button, each integration its own way (see [Running a test](#running-a-test)); while a test runs, a dot sweeps the gauge until the new result comes in (see [Animations](#animations))
+- Average and slowest download of the period, the test **server** (and the provider, when known) as tiles; the slowest is tinted when it is slow
+- **Run a test** button, each integration its own way (see [Running a test](#running-a-test)); while a test runs, the needle sweeps the dial and the box's light blinks until the new result comes in (see [Animations](#animations))
 - Status chip on the title's line: **Normal**, **Slow** (under half of the plan, or of the week's median without a plan; `alert_ratio`), **High latency** (`ping_alert`), **Testing…**, **No result**
 - Header icon in a tinted round badge, in the colour of the status; the subtitle says which service measured and when
 - Collapsible history section, folded back to its default by a click elsewhere on the page
@@ -54,9 +55,10 @@ The sensors are **discovered automatically** from the Home Assistant entity and 
 | <img src="https://raw.githubusercontent.com/juju35/ha-speedtest-card/main/images/iperf3.png" alt="" width="16"> [iperf3](https://www.home-assistant.io/integrations/iperf3/) (core) | Download and upload sensors of the first host; a test with `iperf3.speedtest` |
 | <img src="https://raw.githubusercontent.com/juju35/ha-speedtest-card/main/images/ookla_speedtest.png" alt="" width="16"> [Ookla Speedtest](https://github.com/soulripper13/hass-speedtest-ookla) (custom, `ookla_speedtest`) | Download, upload, ping, jitter, server, ISP; a test with `ookla_speedtest.run_speedtest` |
 | <img src="https://raw.githubusercontent.com/juju35/ha-speedtest-card/main/images/speedtest_tracker.png" alt="" width="16"> [Speedtest Tracker](https://github.com/metaathron/ha-speedtest-tracker) (custom, `speedtest_tracker`) | Download, upload, ping, jitter, packet loss, server, last test time; a test with its *Run test* button |
-| Any sensors | `download` (and `upload`, `ping`, `jitter`) in the configuration, in any data rate unit (bit/s to Gbit/s, or bytes per second); a test with `button` |
+| <img src="https://raw.githubusercontent.com/juju35/ha-speedtest-card/main/images/netgear.png" alt="" width="16"> [Netgear](https://www.home-assistant.io/integrations/netgear/) (core) | The router's speed test: *Downlink bandwidth*, *Uplink bandwidth* and *Average ping* (not its traffic counters); a test with `homeassistant.update_entity` |
+| Any sensors | `download` (and `upload`, `ping`, `jitter`) in the configuration, in any data rate unit of Home Assistant (bit/s to Gbit/s, B/s to GB/s, KiB/s to GiB/s); a test with `button` |
 
-When several are installed, the first in this order is used: Speedtest Tracker, Ookla Speedtest, Speedtest.net, Fast.com, iperf3 (`device` picks one device by its name). Details in [How it works](#how-it-works).
+When several are installed, the first in this order is used: Speedtest Tracker, Ookla Speedtest, Speedtest.net, Fast.com, iperf3, Netgear (`device` picks one device by its name). Details in [How it works](#how-it-works).
 
 ## Prerequisites
 
@@ -173,9 +175,9 @@ zoom: true
 | Integration | Call |
 |---|---|
 | With `button`, or Speedtest Tracker | `button.press` on the button |
-| Ookla Speedtest | `ookla_speedtest.run_speedtest` |
+| Ookla Speedtest | `ookla_speedtest.run_speedtest` with the download sensor as `entity_id` (only that test runs) |
 | iperf3 | `iperf3.speedtest` |
-| Speedtest.net, Fast.com | `homeassistant.update_entity` on the download sensor (the integration measures again) |
+| Speedtest.net, Fast.com, Netgear | `homeassistant.update_entity` on the download sensor (the integration measures again) |
 
 The card shows *Testing…* until the download sensor reports a new result (90 seconds at most).
 
@@ -183,7 +185,7 @@ The card shows *Testing…* until the download sensor reports a new result (90 s
 
 ### Animations
 
-While a test runs, a dot sweeps the gauge back and forth and the button's icon turns; the animation honours `prefers-reduced-motion`:
+While a test runs, the needle sweeps the dial back and forth, the box's light blinks and the button's icon turns; the animation honours `prefers-reduced-motion`:
 
 | Light | Dark |
 |---|---|
@@ -227,9 +229,9 @@ The full card at 6 columns of a phone's Sections view (the gauge above its value
 
 ## How it works
 
-The cards read the Home Assistant entity and device registries instead of relying on entity ids: the sensors of a speed test are those of the integration's device, recognised by their translation key or name (*download*, *upload*, *ping*, *jitter*, *packet loss*, *server*, *ISP*, *last test*; not the latency, average or minimum variants). Entity ids can therefore be in any language or renamed.
+The cards read the Home Assistant entity and device registries instead of relying on entity ids: the sensors of a speed test are those of the integration's device, recognised by their translation key or name (*download*, *upload*, *ping*, a Netgear router's *downlink* / *uplink bandwidth* and *average ping*, *jitter*, *packet loss*, *server*, *ISP*, *last test*; not the latency, average or minimum variants). Entity ids can therefore be in any language or renamed.
 
-- **Units**: speeds are converted to Mbit/s from the sensor's unit (bit/s, kbit/s, Mbit/s, Gbit/s, B/s, kB/s, MB/s).
+- **Units**: speeds are converted to Mbit/s from the sensor's unit (bit/s, kbit/s, Mbit/s, Gbit/s, B/s, kB/s, MB/s, GB/s, KiB/s, MiB/s, GiB/s).
 - **History**: the card asks the recorder (`history/history_during_period`) for the download and upload sensors over `history_days`, again after each new result and every hour. The slowest test of the period is marked when it is under `alert_ratio` of the plan (or of the median).
 - **Status**: *Slow* compares the last download with the plan (or the median of the history), *High latency* the last ping with `ping_alert`.
 
@@ -284,7 +286,7 @@ English is in the card's file; every other language is in its own small file (`s
 
 ## Credits
 
-Speedtest and Ookla are trademarks of Ookla, LLC; Fast.com is a trademark of Netflix, Inc. This project is not affiliated with any of them. Icons from [Material Design Icons](https://pictogrammers.com/library/mdi/).
+Speedtest and Ookla are trademarks of Ookla, LLC; Fast.com is a trademark of Netflix, Inc.; NETGEAR is a trademark of NETGEAR, Inc. This project is not affiliated with any of them. Icons from [Material Design Icons](https://pictogrammers.com/library/mdi/).
 
 ## License
 

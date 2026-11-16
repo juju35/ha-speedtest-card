@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.1.0 - 2026-11-16
+
+### Features
+- New look, as the other cards: the gauge drawn as an illustration next to the download speed in large and colored lines (upload, ping, share of the plan); average, slowest and server as tiles, the slowest tinted when it is slow; the history's download filled; a *Run a test* button with the time of the last test. The mini card gets a small gauge.
+- Netgear routers: their speed test (downlink and uplink bandwidth, average ping) is found on its own, and run again from the card.
+
+### Fixes
+- Speeds in KiB/s, MiB/s or GiB/s (Home Assistant's binary data-rate units) are converted to Mbit/s.
+- Ookla Speedtest: *Run a test* runs the test of the card's download sensor only.
+- A router's restart or firmware button is no longer taken for the speed test button.
+- Netgear: the router is found even when a device of a client it tracks comes first.
+- The share of the plan is coloured by the download speed alone: a high ping no longer turns it orange.
+
 ## 1.0.0 - 2026-11-16
 
 First release.
