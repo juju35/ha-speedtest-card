@@ -46,6 +46,10 @@ test("speeds in Mbit/s whatever the sensor's unit", () => {
   assert.equal(st.toMbps({ state: "500", attributes: { unit_of_measurement: "kbit/s" } }), 0.5);
   assert.equal(st.toMbps({ state: "10", attributes: { unit_of_measurement: "MB/s" } }), 80);
   assert.equal(st.toMbps({ state: "unavailable", attributes: {} }), null);
+  // Binary bytes per second, as Home Assistant's data-rate units name them.
+  assert.equal(st.toMbps({ state: "1", attributes: { unit_of_measurement: "KiB/s" } }), 0.008192);
+  assert.equal(st.toMbps({ state: "1", attributes: { unit_of_measurement: "MiB/s" } }), 8.388608);
+  assert.equal(st.toMbps({ state: "1", attributes: { unit_of_measurement: "GiB/s" } }), 8589.934592);
   assert.equal(st.niceMax(940), 1000);
   assert.equal(st.median([3, 1, 2]), 2);
 });
@@ -76,6 +80,42 @@ test("Speedtest Tracker: its sensors and its run button, by their names", () => 
   );
 });
 
+test("a Netgear router: its speed test sensors, not its traffic counters nor its restart button; a test refreshes them", async () => {
+  const router = [
+    ["sensor", "download_today", "MB"],
+    ["sensor", "downlink_bandwidth", "Mbit/s"],
+    ["sensor", "upload_today", "MB"],
+    ["sensor", "uplink_bandwidth", "Mbit/s"],
+    ["sensor", "average_ping", "ms"],
+    ["button", "reboot", null],
+  ];
+  const data = { states: {}, entities: {}, devices: { r: { id: "r", name: "Router" } }, ws: {} };
+  for (const [domain, key, unit] of router) {
+    const id = `${domain}.router_${key}`;
+    data.entities[id] = { entity_id: id, device_id: "r", platform: "netgear", translation_key: key };
+    data.states[id] = { entity_id: id, state: "12", attributes: { unit_of_measurement: unit, friendly_name: `Router ${key}` } };
+  }
+  const hass = makeHass("default", { data });
+  const m = st.resolve(hass, {});
+  same([m.platform, m.download, m.upload, m.ping, m.button], ["netgear", "sensor.router_downlink_bandwidth", "sensor.router_uplink_bandwidth", "sensor.router_average_ping", null]);
+  const card = new SpeedtestCard();
+  card.setConfig({});
+  card.hass = hass;
+  click(card, { action: "run" });
+  same(hass.calls.at(-1), ["homeassistant", "update_entity", { entity_id: "sensor.router_downlink_bandwidth" }]);
+});
+
+test("Ookla Speedtest: a test runs for the card's download sensor only", async () => {
+  const data = mockData();
+  for (const id of Object.keys(data.entities)) if (data.entities[id].platform === "speedtestdotnet") data.entities[id].platform = "ookla_speedtest";
+  const hass = makeHass("default", { data });
+  const card = new SpeedtestCard();
+  card.setConfig({});
+  card.hass = hass;
+  click(card, { action: "run" });
+  same(hass.calls.at(-1), ["ookla_speedtest", "run_speedtest", { entity_id: "sensor.speedtest_reception" }]);
+});
+
 test("the history is read from the recorder: the download and upload sensors over 7 days", async () => {
   const { hass, card } = await mount({ plan_download: 1000 });
   const ws = hass.calls.find((c) => c[0] === "ws");
@@ -91,9 +131,13 @@ test("gauge, stats, chart with the plan and the slowest test, tiles", async () =
   const h = html();
   assert.match(h, /chip ok[^>]*>.*Normal/s);
   assert.match(h, /Speedtest.net · 14 min. ago/);
-  assert.match(h, /<b class="num">942<\/b>/);
-  assert.match(h, /Upload<\/span><b class="num">612<\/b>/);
-  assert.match(h, /Ping<\/span><b class="num">8<\/b>/);
+  assert.match(h, /<b>942<\/b><span>Mbit\/s<\/span>/);
+  assert.match(h, /612 Mbit\/s · Upload/);
+  assert.match(h, /8 ms Ping/);
+  assert.match(h, /94 % of your plan/);
+  assert.match(h, /class="mark"/);
+  assert.match(h, /class="area"/);
+  assert.match(h, /Last test 14 min. ago/);
   assert.match(h, /Plan 1,000 Mbit\/s/);
   assert.match(h, /Slowest 312 Mbit\/s Fri 9:00 PM/);
   assert.match(h, /Paris, France/);
@@ -135,13 +179,13 @@ test("options: sections hidden and folded", async () => {
   assert.doesNotMatch(html(), /<polyline/);
 });
 
-test("mini card: the download in large, upload and ping, the sparkline and the run button; the detail button shows the full card", async () => {
+test("mini card: the gauge, the download in large, upload and ping and the run button; the detail button shows the full card", async () => {
   const { card, html } = await mount({}, "default", SpeedtestMiniCard);
   assert.match(html(), /content mini/);
-  assert.match(html(), /class="spark"/);
+  assert.match(html(), /hero-art gauge/);
   assert.match(html(), /612 Mbit\/s · 8 ms/);
   click(card, { action: "zoom" });
-  assert.match(html(), /gauge/);
+  assert.match(html(), /class="tiles"/);
   card._unzoom.tap({ composedPath: () => [] });
   assert.match(html(), /content mini/);
 });
