@@ -1570,7 +1570,7 @@ const BASE_STYLE = `
           --st-crit: var(--error-color, #db4437); --st-idle: var(--disabled-text-color, #9e9e9e); --st-active: var(--info-color, #039be5);
           /* Text in a state color is mixed with the text color so that it reads at 4.5:1 at least. */
           --st-accent-text: color-mix(in srgb, var(--st-accent) 50%, var(--primary-text-color)); }
-  ha-card { overflow: hidden; container-type: inline-size; }
+  ha-card { overflow: hidden; container: st-card / inline-size; }
   /* Natural width in a parent that sizes to its content (inline-block, grid "auto" column), without a minimum. */
   :host { display: block; min-width: 0; --st-natural-width: 380px; }
   :host::before { content: ""; display: grid; grid-template-columns: minmax(0, var(--st-natural-width)); height: 0; }
@@ -1678,10 +1678,14 @@ const BASE_STYLE = `
           color: color-mix(in srgb, var(--c, var(--st-idle)) 60%, var(--primary-text-color)); background: color-mix(in srgb, var(--c, var(--st-idle)) 14%, transparent); }
   .pill .icon { width: 14px; height: 14px; color: var(--c, var(--st-idle)); }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
-  @container (max-width: 230px) {
-    .chip { padding: 4px; flex: none; }
-    .chip-text { display: none; }
+  @container st-card (max-width: 230px) {
+    .header .chip { padding: 4px; flex: none; }
+    .header .chip-text { display: none; }
     .header { gap: 6px; }
+  }
+  @container st-card (max-width: 200px) {
+    .banner .chip { padding: 4px; }
+    .banner .chip-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   }
 `;
 
@@ -2602,7 +2606,7 @@ const stIsNight = (hass, config) => {
 };
 
 const ST_BANNER_STYLE = `
-  .banner { position: relative; overflow: hidden; height: 90px; color: #0d2a45; --st-scene-w: min(224px, 56cqw);
+  .banner { position: relative; overflow: hidden; height: 90px; color: #0d2a45; --st-scene-w: min(224px, 46cqw);
             background: linear-gradient(90deg, #f1f8ff 0%, #e2f1fd 34%, #b9def8 70%, #9fd0f3 100%); }
   .banner.night { color: #fff; background: linear-gradient(90deg, #1b2f52 0%, #15284a 36%, #0f1f3d 72%, #0a1830 100%); }
   /* The ground: a 10 px lawn strip under the whole banner, edge to edge. */
@@ -2610,7 +2614,14 @@ const ST_BANNER_STYLE = `
   .night .st-ground { background: repeating-linear-gradient(90deg, #1f4a2a 0 22px, #245433 22px 44px); }
   .st-scene { position: absolute; right: 0; bottom: 10px; width: var(--st-scene-w); height: 80px; overflow: visible; }
   .htext { position: absolute; left: 12px; top: 0; bottom: 10px; right: calc(var(--st-scene-w) + 4px); display: flex; align-items: center; gap: 10px; min-width: 0; }
-  .htext .titles { display: flex; flex-direction: column; gap: 1px; }
+  /* Title row: the title, then the status pill 8 px after it (in the icon's colour), both shrinking (the title keeps a
+     few characters, the pill at most about half the row); the subtitle under them. Short of room the pill takes its
+     own line under the subtitle; on a very narrow card only its dot shows (its text stays in its title and for
+     screen readers). */
+  .htext .titles { flex: 1 1 auto; min-width: 0; display: grid; row-gap: 1px; column-gap: 8px; align-items: center; justify-content: start;
+                   grid-template-columns: minmax(min(4.5ch, 100%), max-content) minmax(0, max-content); container: st-titles / inline-size; }
+  .htext .titles > .sub { grid-column: 1 / -1; }
+  @container st-titles (max-width: 160px) { .htext .titles > .chip { grid-column: 1 / -1; grid-row: 3; margin-top: 2px; } }
   .banner .name { font-weight: 600; }
   .banner .sub { color: #3b5b78; }
   .banner.night .sub { color: rgba(255,255,255,.78); }
@@ -2619,10 +2630,17 @@ const ST_BANNER_STYLE = `
   .banner .type-icon .icon { fill: color-mix(in srgb, var(--st-tint) 82%, #0d2a45); }
   .banner.night .type-icon { background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }
   .banner.night .type-icon .icon { fill: color-mix(in srgb, var(--st-tint) 62%, #fff); }
-  .banner .chip { align-self: flex-start; max-width: 100%; margin-top: 3px; background: rgba(255,255,255,.7); color: color-mix(in srgb, var(--c) 60%, #0d2a45); }
-  .banner.night .chip { background: rgba(10,20,40,.5); color: color-mix(in srgb, var(--c) 45%, #fff); }
-  .banner .zoom { position: absolute; top: 6px; right: 6px; margin: 0; color: #0d2a45; background: rgba(255,255,255,.55); }
-  .banner.night .zoom { color: #fff; background: rgba(10,20,40,.45); }
+  .banner .chip { justify-self: start; max-width: 100%; line-height: 16px;
+                  background: color-mix(in srgb, var(--c) 18%, rgba(255,255,255,.78)); color: color-mix(in srgb, var(--c) 45%, #0d2a45); }
+  .banner.night .chip { background: color-mix(in srgb, var(--c) 30%, rgba(8,18,38,.55)); color: color-mix(in srgb, var(--c) 35%, #ffffff); }
+  .banner .chip .dot { width: 7px; height: 7px; }
+  /* The expand / collapse button: 24 px, round, frosted, in the banner's top right corner. */
+  .banner .zoom { position: absolute; z-index: 2; top: 5px; right: 5px; width: 24px; height: 24px; margin: 0; color: #33506b;
+                  background: rgba(255,255,255,.55); box-shadow: inset 0 0 0 1px rgba(255,255,255,.7);
+                  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  .banner .zoom:hover { background: rgba(255,255,255,.75); color: #33506b; }
+  .banner.night .zoom { color: #fff; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }
+  .banner.night .zoom:hover { background: rgba(255,255,255,.22); color: #fff; }
   .st-night, .night .st-day { display: none; }
   .night .st-night { display: inline; }
   .st-sun { fill: #ffd65a; } .st-sun.halo { opacity: .28; }
@@ -2795,8 +2813,8 @@ class SpeedtestCard extends CardBase {
           <div class="type-icon ${cls}">${svgIcon(ICONS.wifi)}</div>
           <div class="titles">
             <div class="name">${esc(title)}</div>
+            <span class="chip ${cls}${chip.entity ? " clickable" : ""}"${moreInfo(chip.entity)} title="${esc(chip.text)}" aria-label="${esc(chip.text)}"><span class="dot"></span><span class="chip-text">${esc(chip.text)}</span></span>
             ${sub ? `<div class="sub">${esc(sub)}</div>` : ""}
-            <span class="chip ${chip.cls}${chip.entity ? " clickable" : ""}"${moreInfo(chip.entity)} title="${esc(chip.text)}" aria-label="${esc(chip.text)}"><span class="dot"></span><span class="chip-text">${esc(chip.text)}</span></span>
           </div>
         </div>
         ${this._zoomButton()}

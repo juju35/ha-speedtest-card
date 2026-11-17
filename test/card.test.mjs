@@ -137,7 +137,8 @@ test("the history is read from the recorder: the download and upload sensors ove
 test("gauge, stats, chart with the plan and the slowest test, tiles", async () => {
   const { html } = await mount({ plan_download: 1000 });
   const h = html();
-  assert.match(h, /chip ok[^>]*>.*Normal/s);
+  // The pill takes the icon's colour (the accent when all is well), right after the title.
+  assert.match(h, /<div class="name">Internet speed<\/div>\s*<span class="chip accent[^>]*>.*Normal/s);
   assert.match(h, /Speedtest.net · 14 min. ago/);
   assert.match(h, /<b>942<\/b><span>Mbit\/s<\/span>/);
   assert.match(h, /612 Mbit\/s · Upload/);
@@ -157,7 +158,7 @@ test("slow: under half of the plan, else of the median of the week", async () =>
   assert.match((await mount({ plan_download: 1000 }, "slow")).html(), /chip warn[^>]*>.*Slow/s);
   // No plan: the median of the history (around 930 Mbit/s) is the reference.
   assert.match((await mount({}, "slow")).html(), /chip warn[^>]*>.*Slow/s);
-  assert.match((await mount({ plan_download: 400 }, "slow")).html(), /chip ok[^>]*>.*Normal/s);
+  assert.match((await mount({ plan_download: 400 }, "slow")).html(), /chip accent[^>]*>.*Normal/s);
 });
 
 test("run a test: Speedtest.net refreshes its download sensor; the card says it is testing until a new result", async () => {
@@ -283,4 +284,14 @@ test("illustrated header: the gauge on the banner, night from sun.sun or the the
   assert.doesNotMatch(classic, /class="banner/);
   assert.match(classic, /class="header"/);
   assert.match((await mount({}, "default", SpeedtestMiniCard)).html(), /class="banner mini-banner st-ok"/);
+});
+
+test("illustrated header: the status pill follows the title, moves under the subtitle short of room, then only its dot shows; the zoom button in the corner", async () => {
+  const { readFileSync } = await import("node:fs");
+  const src = readFileSync(new URL("../src/speedtest-card.js", import.meta.url), "utf8");
+  assert.match(src, /\.htext \.titles \{[^}]*display: grid;[^}]*grid-template-columns: minmax\(min\(4\.5ch, 100%\), max-content\) minmax\(0, max-content\); container: st-titles \/ inline-size;/);
+  assert.match(src, /@container st-titles \(max-width: \d+px\) \{ \.htext \.titles > \.chip \{ grid-column: 1 \/ -1; grid-row: 3;/);
+  assert.match(src, /@container st-card \(max-width: 200px\) \{\s*\.banner \.chip \{ padding: 4px; \}\s*\.banner \.chip-text \{[^}]*clip-path: inset\(50%\)/);
+  const zoom = src.match(/\n {2}\.banner \.zoom \{([^}]*)\}/)[1];
+  for (const d of [/position: absolute/, /top: 5px/, /right: 5px/, /width: 24px/, /height: 24px/]) assert.match(zoom, d);
 });

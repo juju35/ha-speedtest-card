@@ -4,6 +4,7 @@
 
 ### Features
 - Illustrated header, 90 px on the full and the mini card: the title, subtitle and status chip on the sky, the card's gauge standing on a lawn strip with a fibre line on poles running to a house. Light pulses run along the line: fast while a test runs, sparse and amber when the line is slow, none without a result. The round Wi-Fi icon takes the colour of the status (accent, blue while testing, amber when slow, red without a result).
+- The status pill sits right after the title, in the icon's colour (frosted on the sky); short of room it takes its own line under the subtitle, on a very narrow card only its dot shows. The mini card's expand / collapse button sits in the banner's top right corner (24 px, frosted), like the other cards; the scene leaves the title a little more room.
 - Night picture (moon, stars, lit window) when `sun.sun` is below the horizon, else with the dark theme; `illustration_theme: day | night` forces one, `illustration: false` brings back the classic header. Both options are in the visual editors, translated in every language.
 
 ## 1.1.0 - 2026-11-16
