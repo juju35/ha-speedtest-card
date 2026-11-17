@@ -14,6 +14,7 @@ const VERSION = "__VERSION__";
 const CARD_ICONS = {
   gauge:
     "M12,16A3,3 0 0,1 9,13C9,11.88 9.61,10.9 10.5,10.39L20.21,4.77L14.68,14.35C14.18,15.33 13.17,16 12,16M12,3C13.81,3 15.5,3.5 16.97,4.32L14.87,5.53C14,5.19 13,5 12,5A8,8 0 0,0 4,13C4,15.21 4.89,17.21 6.34,18.65H6.35C6.74,19.04 6.74,19.67 6.35,20.06C5.96,20.45 5.32,20.45 4.93,20.07V20.07C3.12,18.26 2,15.76 2,13A10,10 0 0,1 12,3M22,13C22,15.76 20.88,18.26 19.07,20.07V20.07C18.68,20.45 18.05,20.45 17.66,20.06C17.27,19.67 17.27,19.04 17.66,18.65V18.65C19.11,17.2 20,15.21 20,13C20,12 19.81,11 19.46,10.1L20.67,8C21.5,9.5 22,11.18 22,13Z",
+  wifi: "M12,21L15.6,16.2C14.6,15.45 13.35,15 12,15C10.65,15 9.4,15.45 8.4,16.2L12,21M12,3C7.95,3 4.21,4.34 1.2,6.6L3,9C5.5,7.12 8.62,6 12,6C15.38,6 18.5,7.12 21,9L22.8,6.6C19.79,4.34 16.05,3 12,3M12,9C9.3,9 6.81,9.89 4.8,11.4L6.6,13.8C8.1,12.67 9.97,12 12,12C14.03,12 15.9,12.67 17.4,13.8L19.2,11.4C17.19,9.89 14.7,9 12,9Z",
   download: "M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z",
   upload: "M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z",
   ping: "M3,13H7L10,5L14,19L17,11H21V13H18.4L14,24L10,10L8.4,15H3V13Z",
@@ -97,6 +98,11 @@ const STRINGS = {
     show_subtitle: "Show subtitle",
     no_registry: "This card needs Home Assistant 2024.8 or later.",
     unavailable: "Unavailable",
+    illustration: "Animated illustration",
+    illustration_theme: "Illustration theme",
+    theme_auto: "Automatic (sun or dark theme)",
+    theme_day: "Day",
+    theme_night: "Night",
   },
   fr: {
     of_plan: "{p} % de votre abonnement",
@@ -155,6 +161,11 @@ const STRINGS = {
     show_subtitle: "Afficher le sous-titre",
     no_registry: "Cette carte nécessite Home Assistant 2024.8 ou plus récent.",
     unavailable: "Indisponible",
+    illustration: "Illustration animée",
+    illustration_theme: "Thème de l’illustration",
+    theme_auto: "Automatique (soleil ou thème sombre)",
+    theme_day: "Jour",
+    theme_night: "Nuit",
   },
   de: {
     of_plan: "{p} % Ihres Tarifs",
@@ -213,6 +224,11 @@ const STRINGS = {
     show_subtitle: "Untertitel anzeigen",
     no_registry: "Diese Karte benötigt Home Assistant 2024.8 oder neuer.",
     unavailable: "Nicht verfügbar",
+    illustration: "Animierte Illustration",
+    illustration_theme: "Thema der Illustration",
+    theme_auto: "Automatisch (Sonne oder dunkles Design)",
+    theme_day: "Tag",
+    theme_night: "Nacht",
   },
   es: {
     of_plan: "{p} % de su contrato",
@@ -271,6 +287,11 @@ const STRINGS = {
     show_subtitle: "Mostrar subtítulo",
     no_registry: "Esta tarjeta necesita Home Assistant 2024.8 o posterior.",
     unavailable: "No disponible",
+    illustration: "Ilustración animada",
+    illustration_theme: "Tema de la ilustración",
+    theme_auto: "Automático (sol o tema oscuro)",
+    theme_day: "Día",
+    theme_night: "Noche",
   },
   it: {
     of_plan: "{p}% del tuo abbonamento",
@@ -329,6 +350,11 @@ const STRINGS = {
     show_subtitle: "Mostra sottotitolo",
     no_registry: "Questa scheda richiede Home Assistant 2024.8 o successivo.",
     unavailable: "Non disponibile",
+    illustration: "Illustrazione animata",
+    illustration_theme: "Tema dell’illustrazione",
+    theme_auto: "Automatico (sole o tema scuro)",
+    theme_day: "Giorno",
+    theme_night: "Notte",
   },
   nl: {
     of_plan: "{p}% van uw abonnement",
@@ -387,6 +413,11 @@ const STRINGS = {
     show_subtitle: "Ondertitel tonen",
     no_registry: "Deze kaart vereist Home Assistant 2024.8 of nieuwer.",
     unavailable: "Niet beschikbaar",
+    illustration: "Geanimeerde illustratie",
+    illustration_theme: "Thema van de illustratie",
+    theme_auto: "Automatisch (zon of donker thema)",
+    theme_day: "Dag",
+    theme_night: "Nacht",
   },
   pt: {
     of_plan: "{p}% do seu plano",
@@ -445,6 +476,11 @@ const STRINGS = {
     show_subtitle: "Mostrar subtítulo",
     no_registry: "Este cartão requer o Home Assistant 2024.8 ou posterior.",
     unavailable: "Indisponível",
+    illustration: "Ilustração animada",
+    illustration_theme: "Tema da ilustração",
+    theme_auto: "Automático (sol ou tema escuro)",
+    theme_day: "Dia",
+    theme_night: "Noite",
   },
   pl: {
     of_plan: "{p} % twojego planu",
@@ -503,6 +539,11 @@ const STRINGS = {
     show_subtitle: "Pokaż podtytuł",
     no_registry: "Ta karta wymaga Home Assistant 2024.8 lub nowszego.",
     unavailable: "Niedostępne",
+    illustration: "Animowana ilustracja",
+    illustration_theme: "Motyw ilustracji",
+    theme_auto: "Automatycznie (słońce lub ciemny motyw)",
+    theme_day: "Dzień",
+    theme_night: "Noc",
   },
   sr: {
     of_plan: "{p} % вашег пакета",
@@ -561,6 +602,11 @@ const STRINGS = {
     show_subtitle: "Прикажи поднаслов",
     no_registry: "Ова картица захтева Home Assistant 2024.8 или новији.",
     unavailable: "Недоступно",
+    illustration: "Анимирана илустрација",
+    illustration_theme: "Тема илустрације",
+    theme_auto: "Аутоматски (сунце или тамна тема)",
+    theme_day: "Дан",
+    theme_night: "Ноћ",
   },
   "sr-Latn": {
     of_plan: "{p} % vašeg paketa",
@@ -619,6 +665,11 @@ const STRINGS = {
     show_subtitle: "Prikaži podnaslov",
     no_registry: "Ova kartica zahteva Home Assistant 2024.8 ili noviji.",
     unavailable: "Nedostupno",
+    illustration: "Animirana ilustracija",
+    illustration_theme: "Tema ilustracije",
+    theme_auto: "Automatski (sunce ili tamna tema)",
+    theme_day: "Dan",
+    theme_night: "Noć",
   },
   ro: {
     of_plan: "{p} % din abonamentul dvs.",
@@ -677,6 +728,11 @@ const STRINGS = {
     show_subtitle: "Afișează subtitlul",
     no_registry: "Acest card necesită Home Assistant 2024.8 sau mai nou.",
     unavailable: "Indisponibil",
+    illustration: "Ilustrație animată",
+    illustration_theme: "Tema ilustrației",
+    theme_auto: "Automat (soare sau temă întunecată)",
+    theme_day: "Zi",
+    theme_night: "Noapte",
   },
   da: {
     of_plan: "{p} % af dit abonnement",
@@ -735,6 +791,11 @@ const STRINGS = {
     show_subtitle: "Vis undertitel",
     no_registry: "Dette kort kræver Home Assistant 2024.8 eller nyere.",
     unavailable: "Utilgængelig",
+    illustration: "Animeret illustration",
+    illustration_theme: "Illustrationens tema",
+    theme_auto: "Automatisk (sol eller mørkt tema)",
+    theme_day: "Dag",
+    theme_night: "Nat",
   },
   sv: {
     of_plan: "{p} % av ditt abonnemang",
@@ -793,6 +854,11 @@ const STRINGS = {
     show_subtitle: "Visa undertitel",
     no_registry: "Det här kortet kräver Home Assistant 2024.8 eller senare.",
     unavailable: "Otillgänglig",
+    illustration: "Animerad illustration",
+    illustration_theme: "Illustrationens tema",
+    theme_auto: "Automatiskt (sol eller mörkt tema)",
+    theme_day: "Dag",
+    theme_night: "Natt",
   },
   bg: {
     of_plan: "{p} % от вашия план",
@@ -851,6 +917,11 @@ const STRINGS = {
     show_subtitle: "Покажи подзаглавие",
     no_registry: "Тази карта изисква Home Assistant 2024.8 или по-нов.",
     unavailable: "Недостъпно",
+    illustration: "Анимирана илюстрация",
+    illustration_theme: "Тема на илюстрацията",
+    theme_auto: "Автоматично (слънце или тъмна тема)",
+    theme_day: "Ден",
+    theme_night: "Нощ",
   },
   ru: {
     of_plan: "{p} % от вашего тарифа",
@@ -909,6 +980,11 @@ const STRINGS = {
     show_subtitle: "Показывать подзаголовок",
     no_registry: "Для этой карточки нужен Home Assistant 2024.8 или новее.",
     unavailable: "Недоступно",
+    illustration: "Анимированная иллюстрация",
+    illustration_theme: "Тема иллюстрации",
+    theme_auto: "Автоматически (солнце или тёмная тема)",
+    theme_day: "День",
+    theme_night: "Ночь",
   },
   uk: {
     of_plan: "{p} % від вашого тарифу",
@@ -967,6 +1043,11 @@ const STRINGS = {
     show_subtitle: "Показувати підзаголовок",
     no_registry: "Для цієї картки потрібен Home Assistant 2024.8 або новіший.",
     unavailable: "Недоступно",
+    illustration: "Анімована ілюстрація",
+    illustration_theme: "Тема ілюстрації",
+    theme_auto: "Автоматично (сонце або темна тема)",
+    theme_day: "День",
+    theme_night: "Ніч",
   },
   hu: {
     of_plan: "Az előfizetés {p} %-a",
@@ -1025,6 +1106,11 @@ const STRINGS = {
     show_subtitle: "Alcím megjelenítése",
     no_registry: "Ehhez a kártyához Home Assistant 2024.8 vagy újabb szükséges.",
     unavailable: "Nem elérhető",
+    illustration: "Animált illusztráció",
+    illustration_theme: "Az illusztráció témája",
+    theme_auto: "Automatikus (nap vagy sötét téma)",
+    theme_day: "Nappal",
+    theme_night: "Éjszaka",
   },
   sk: {
     of_plan: "{p} % vášho programu",
@@ -1083,6 +1169,11 @@ const STRINGS = {
     show_subtitle: "Zobraziť podnadpis",
     no_registry: "Táto karta vyžaduje Home Assistant 2024.8 alebo novší.",
     unavailable: "Nedostupné",
+    illustration: "Animovaná ilustrácia",
+    illustration_theme: "Téma ilustrácie",
+    theme_auto: "Automaticky (slnko alebo tmavá téma)",
+    theme_day: "Deň",
+    theme_night: "Noc",
   },
   cs: {
     of_plan: "{p} % vašeho tarifu",
@@ -1141,6 +1232,11 @@ const STRINGS = {
     show_subtitle: "Zobrazit podtitul",
     no_registry: "Tato karta vyžaduje Home Assistant 2024.8 nebo novější.",
     unavailable: "Nedostupné",
+    illustration: "Animovaná ilustrace",
+    illustration_theme: "Motiv ilustrace",
+    theme_auto: "Automaticky (slunce nebo tmavý motiv)",
+    theme_day: "Den",
+    theme_night: "Noc",
   },
   sl: {
     of_plan: "{p} % vašega paketa",
@@ -1199,6 +1295,11 @@ const STRINGS = {
     show_subtitle: "Prikaži podnaslov",
     no_registry: "Ta kartica potrebuje Home Assistant 2024.8 ali novejši.",
     unavailable: "Ni na voljo",
+    illustration: "Animirana ilustracija",
+    illustration_theme: "Tema ilustracije",
+    theme_auto: "Samodejno (sonce ali temna tema)",
+    theme_day: "Dan",
+    theme_night: "Noč",
   },
   lv: {
     of_plan: "{p} % no jūsu plāna",
@@ -1257,6 +1358,11 @@ const STRINGS = {
     show_subtitle: "Rādīt apakšvirsrakstu",
     no_registry: "Šai kartītei nepieciešams Home Assistant 2024.8 vai jaunāks.",
     unavailable: "Nav pieejams",
+    illustration: "Animēta ilustrācija",
+    illustration_theme: "Ilustrācijas motīvs",
+    theme_auto: "Automātiski (saule vai tumšais motīvs)",
+    theme_day: "Diena",
+    theme_night: "Nakts",
   },
   el: {
     of_plan: "{p} % του πακέτου σας",
@@ -1315,6 +1421,11 @@ const STRINGS = {
     show_subtitle: "Εμφάνιση υπότιτλου",
     no_registry: "Αυτή η κάρτα απαιτεί Home Assistant 2024.8 ή νεότερο.",
     unavailable: "Μη διαθέσιμο",
+    illustration: "Κινούμενη εικονογράφηση",
+    illustration_theme: "Θέμα εικονογράφησης",
+    theme_auto: "Αυτόματο (ήλιος ή σκούρο θέμα)",
+    theme_day: "Ημέρα",
+    theme_night: "Νύχτα",
   },
 };
 
@@ -1459,7 +1570,7 @@ const BASE_STYLE = `
           --st-crit: var(--error-color, #db4437); --st-idle: var(--disabled-text-color, #9e9e9e); --st-active: var(--info-color, #039be5);
           /* Text in a state color is mixed with the text color so that it reads at 4.5:1 at least. */
           --st-accent-text: color-mix(in srgb, var(--st-accent) 50%, var(--primary-text-color)); }
-  ha-card { overflow: hidden; container-type: inline-size; }
+  ha-card { overflow: hidden; container: st-card / inline-size; }
   /* Natural width in a parent that sizes to its content (inline-block, grid "auto" column), without a minimum. */
   :host { display: block; min-width: 0; --st-natural-width: 380px; }
   :host::before { content: ""; display: grid; grid-template-columns: minmax(0, var(--st-natural-width)); height: 0; }
@@ -1472,16 +1583,27 @@ const BASE_STYLE = `
   .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c, var(--st-ok)); flex: none; display: inline-block; }
   .chip { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; white-space: nowrap;
           background: color-mix(in srgb, var(--c, var(--st-ok)) 15%, transparent); color: color-mix(in srgb, var(--c, var(--st-ok)) 50%, var(--primary-text-color));
-          flex: 0 1 auto; min-width: 0; max-width: 50%; overflow: hidden; box-sizing: border-box; }
-  .chip-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+          flex: none; box-sizing: border-box; }
+  .chip-text { white-space: nowrap; }
   .header { display: flex; align-items: center; gap: 10px; padding: 12px 12px 0; }
-  /* The chip sits on the title's line, whether a subtitle follows or not. */
-  .header .chip, .header .zoom { align-self: flex-start; margin-top: 10px; }
+  .header .zoom { align-self: flex-start; margin-top: 10px; }
+  /* The status pill (classic header and banner): on the title row, 8 px after the title, only when the whole title
+     and the pill's whole label fit there; otherwise on its own line under the subtitle, which then keeps one line.
+     Its dot alone at 200 px or less, or when the banner has no room left for its label (pill-dot): the label stays
+     in its title and for screen readers. Measured after each render (_fitPill), in every language, never by a fixed
+     width. */
+  .trow { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .trow .name { flex: 0 1 auto; min-width: 0; }
+  .titles.pill-below .trow { display: contents; }
+  .titles.pill-below .sub { order: 1; }
+  .titles.pill-below .chip { order: 2; align-self: flex-start; margin-top: 2px; }
+  .titles.pill-dot .chip { padding: 4px; }
+  .titles.pill-dot .chip-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .type-icon { position: relative; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none;
                --st-tint: var(--c, var(--st-accent)); background: color-mix(in srgb, var(--st-tint) 16%, transparent); transition: background-color .3s ease; }
   .type-icon .icon { width: 24px; height: 24px; fill: color-mix(in srgb, var(--st-tint) 60%, var(--primary-text-color)); transition: fill .3s ease; }
-  .titles { flex: 1 1 0; min-width: 5ch; }
-  :host([hide-title]) .titles > .name, :host([hide-subtitle]) .titles > .sub { display: none; }
+  .titles { flex: 1 1 0; min-width: 5ch; display: flex; flex-direction: column; }
+  :host([hide-title]) .titles .name, :host([hide-subtitle]) .titles > .sub { display: none; }
   .name { font-size: 16px; font-weight: 500; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .warning { padding: 16px; color: color-mix(in srgb, var(--st-warn) 50%, var(--primary-text-color)); }
@@ -1567,10 +1689,12 @@ const BASE_STYLE = `
           color: color-mix(in srgb, var(--c, var(--st-idle)) 60%, var(--primary-text-color)); background: color-mix(in srgb, var(--c, var(--st-idle)) 14%, transparent); }
   .pill .icon { width: 14px; height: 14px; color: var(--c, var(--st-idle)); }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
-  @container (max-width: 230px) {
-    .chip { padding: 4px; flex: none; }
-    .chip-text { display: none; }
+  @container st-card (max-width: 230px) {
     .header { gap: 6px; }
+  }
+  @container st-card (max-width: 200px) {
+    .chip { padding: 4px; }
+    .chip-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   }
 `;
 
@@ -1802,6 +1926,7 @@ class CardBase extends HTMLElement {
       },
     );
     this._outside.on();
+    this._watchPill();
     if (this._dialog) window.addEventListener("keydown", this._onKey);
     clearInterval(this._tick);
     this._tick = setInterval(() => {
@@ -1819,12 +1944,60 @@ class CardBase extends HTMLElement {
     clearInterval(this._countdown);
     this._tick = this._countdown = null;
     this._outside?.off();
+    this._unwatchPill();
     window.removeEventListener("keydown", this._onKey);
     this._onDisconnect?.();
     // Left (another dashboard view, a conditional card hidden): back to the defaults, so that the card does not come
     // back unfolded or with its popup open.
     this._toggled = new Map();
     this._dialog = null;
+  }
+
+  // The status pill goes on the title row, right after the title, only when the whole title and the pill's whole
+  // label fit there; otherwise it takes its own line under the subtitle (the subtitle then on one line). In the
+  // banner, when title, subtitle and pill still do not fit above the ground strip (or the pill's label runs past the
+  // text, over the picture), the pill keeps its dot only.
+  // Measured after each render and on every new width (or once the web font is loaded), never by a fixed width.
+  _fitPill() {
+    for (const t of this.shadowRoot?.querySelectorAll?.(".titles") || []) {
+      const row = t.querySelector?.(".trow");
+      const name = row?.querySelector(".name");
+      const chips = row ? [...row.children].filter((n) => n.classList.contains("chip")) : [];
+      if (!name?.getBoundingClientRect || !chips.length) continue;
+      t.classList.remove("pill-below", "pill-dot");
+      // The title's whole width (scrollWidth is rounded: 1 px more, so that a title that fits is never cut).
+      const need = chips.reduce((w, c) => w + PILL_GAP_PX + c.getBoundingClientRect().width, name.scrollWidth + 1);
+      if (need <= row.getBoundingClientRect().width + 0.5) continue;
+      t.classList.add("pill-below");
+      const banner = t.closest(".banner");
+      if (!banner) continue;
+      const box = banner.getBoundingClientRect();
+      const ground = box.bottom - PILL_GROUND_PX;
+      const right = t.getBoundingClientRect().right;
+      const out = [name, ...t.querySelectorAll(".sub"), ...chips].some((n) => {
+        const r = n.getBoundingClientRect();
+        return r.height > 0 && (r.top < box.top - 0.5 || r.bottom > ground + 0.5 || r.right > right + 0.5);
+      });
+      if (out) t.classList.add("pill-dot");
+    }
+  }
+
+  _watchPill() {
+    if (typeof ResizeObserver !== "function") return;
+    this._pillResize ??= new ResizeObserver((entries) => {
+      const w = Math.round(entries.at(-1).contentRect.width);
+      if (w === this._pillWidth) return;
+      this._pillWidth = w;
+      cancelAnimationFrame(this._pillFrame);
+      this._pillFrame = requestAnimationFrame(() => this._fitPill());
+    });
+    this._pillResize.observe(this);
+    document.fonts?.ready?.then(() => this._fitPill());
+  }
+
+  _unwatchPill() {
+    this._pillResize?.disconnect();
+    this._pillWidth = null;
   }
 
   _t(key, vars) {
@@ -1881,6 +2054,7 @@ class CardBase extends HTMLElement {
       const kept = this._dialog || this._byPointer ? null : this._focusedSpot();
       this._html = html;
       this.shadowRoot.innerHTML = html;
+      this._fitPill();
       // Fields get back what was typed, and the caret when one had the focus.
       for (const el of this.shadowRoot.querySelectorAll?.("[data-keep]") || []) {
         const v = this._inputs[el.dataset.keep];
@@ -2059,16 +2233,15 @@ class CardBase extends HTMLElement {
       <div class="header">
         <div class="type-icon ${cls}">${extra}${svgIcon(icon)}</div>
         <div class="titles">
-          <div class="name">${esc(title)}</div>
-          ${sub ? `<div class="sub">${esc(sub)}</div>` : ""}
+          <div class="trow"><div class="name">${esc(title)}</div>${
+            chip
+              ? `<span class="chip ${chip.cls}${chip.entity ? " clickable" : ""}"${moreInfo(chip.entity)} title="${esc(chip.text)}" aria-label="${esc(
+                  chip.text,
+                )}"><span class="dot"></span><span class="chip-text">${esc(chip.text)}</span></span>`
+              : ""
+          }</div>
+          ${sub ? `<div class="sub" title="${esc(sub)}">${esc(sub)}</div>` : ""}
         </div>
-        ${
-          chip
-            ? `<span class="chip ${chip.cls}${chip.entity ? " clickable" : ""}"${moreInfo(chip.entity)} title="${esc(chip.text)}" aria-label="${esc(
-                chip.text,
-              )}"><span class="dot"></span><span class="chip-text">${esc(chip.text)}</span></span>`
-            : ""
-        }
         ${this._zoomButton()}
       </div>`;
   }
@@ -2425,6 +2598,7 @@ const SPEED_STYLE = `
   @keyframes st-spin { to { transform: rotate(360deg); } }
   .mini .hero-art.gauge { width: 76px; }
   .mini .big b { font-size: 26px; }
+  .banner.mini-banner { --st-scene-w: min(210px, 50cqw); }
   @container (max-width: 300px) {
     .hero { flex-direction: column; align-items: stretch; gap: 8px; }
     .hero-art.gauge { align-self: center; }
@@ -2436,6 +2610,133 @@ const SPEED_STYLE = `
     .mini .hero-art.gauge { display: none; }
   }
 `;
+
+// ---------------------------------------------------------------------------
+// Illustrated header
+// ---------------------------------------------------------------------------
+
+// The banner's picture, 240 × 80 at the right of the banner, standing on its 10 px lawn strip: the card's own gauge
+// on the ground at the left (its box is the modem), a fibre line on poles over the hills down to a house, light
+// pulses running along it (fast while a test runs, amber and sparse when the line is slow, none without a result).
+// The left of the banner is sky: the title sits there. `uid` keeps each card's ids apart on a page.
+const ST_STARS = [
+  [12, 8],
+  [44, 18],
+  [96, 6],
+  [132, 24],
+  [178, 10],
+  [222, 30],
+  [70, 30],
+  [204, 4],
+];
+const ST_LINE = "M56 74 Q70 66 92 36 Q117 46 142 36 Q167 46 192 36 Q204 44 212 58";
+const stSceneSvg = (uid, gauge) => {
+  const stars = ST_STARS.map(([x, y], i) => `<circle class="st-star${i % 3 ? "" : " tw"}" cx="${x}" cy="${y}" r=".7"/>`).join("");
+  const poles = [92, 142, 192].map((x) => `<line x1="${x}" y1="78" x2="${x}" y2="34"/><line x1="${x - 4}" y1="36" x2="${x + 4}" y2="36"/>`).join("");
+  return `<svg class="st-scene" viewBox="0 0 240 80" preserveAspectRatio="xMaxYMax meet" aria-hidden="true" focusable="false">
+    <defs><radialGradient id="st-glow-${uid}"><stop offset="0" stop-color="#ffd27a" stop-opacity=".75"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient></defs>
+    <g class="st-day"><circle class="st-sun halo" cx="160" cy="14" r="9"/><circle class="st-sun" cx="160" cy="14" r="6"/></g>
+    <g class="st-night">${stars}<circle class="st-moon" cx="160" cy="14" r="5.5"/><circle class="st-moon-cut" cx="162.5" cy="12" r="4.5"/></g>
+    <path class="st-hill far" d="M0 80C30 70 60 64 100 66C140 68 170 60 240 61V80Z"/>
+    <path class="st-hill" d="M0 80C40 74 90 75 240 71V80Z"/>
+    <g class="st-poles">${poles}</g>
+    <path class="st-cable" d="${ST_LINE}"/>
+    <path class="st-pulse" d="${ST_LINE}"/>
+    <g class="st-house" transform="translate(208 52)">
+      <circle class="st-glow" cx="8" cy="10" r="10" fill="url(#st-glow-${uid})"/>
+      <rect class="st-wall" width="26" height="28"/><path class="st-roof" d="M-3 1L13-10L29 1Z"/>
+      <rect class="st-win" x="4" y="7" width="7" height="6" rx=".6"/><rect class="st-door" x="15" y="15" width="7" height="13"/>
+    </g>
+    <svg class="st-gauge ${gauge.cls}" x="2" y="27.5" width="70" height="52.5" viewBox="8 18 104 78" overflow="visible">
+      <path class="face" d="M8 70A52 52 0 0 1 112 70Z"/>${gauge.art}
+    </svg>
+  </svg>`;
+};
+
+// Night picture: forced by illustration_theme, else the sun below the horizon or Home Assistant's dark theme (dark mode alone without a usable sun).
+const stIsNight = (hass, config) => {
+  const theme = config?.illustration_theme;
+  if (theme === "night") return true;
+  if (theme === "day") return false;
+  const sun = hass?.states?.["sun.sun"];
+  if (valid(sun)) return sun.state === "below_horizon" || !!hass?.themes?.darkMode;
+  return !!hass?.themes?.darkMode;
+};
+
+// The banner's ground strip (the lawn), that the title block keeps clear of, and the gap between the title and the
+// status pill on its row (.trow).
+const PILL_GROUND_PX = 10;
+const PILL_GAP_PX = 8;
+
+const ST_BANNER_STYLE = `
+  .banner { position: relative; overflow: hidden; height: 90px; color: #0d2a45; --st-scene-w: min(224px, 46cqw);
+            background: linear-gradient(90deg, #f1f8ff 0%, #e2f1fd 34%, #b9def8 70%, #9fd0f3 100%); }
+  .banner.night { color: #fff; background: linear-gradient(90deg, #1b2f52 0%, #15284a 36%, #0f1f3d 72%, #0a1830 100%); }
+  /* The ground: a 10 px lawn strip under the whole banner, edge to edge. */
+  .st-ground { position: absolute; left: 0; right: 0; bottom: 0; height: 10px; background: repeating-linear-gradient(90deg, #5aa83d 0 22px, #6cbb4c 22px 44px); }
+  .night .st-ground { background: repeating-linear-gradient(90deg, #1f4a2a 0 22px, #245433 22px 44px); }
+  .st-scene { position: absolute; right: 0; bottom: 10px; width: var(--st-scene-w); height: 80px; overflow: visible; }
+  .htext { position: absolute; left: 12px; top: 0; bottom: 10px; right: calc(var(--st-scene-w) + 4px); display: flex; align-items: center; gap: 10px; min-width: 0; }
+  /* Title row: the title, then the status pill 8 px after it (in the icon's colour, see .trow); the subtitle under. */
+  .htext .titles { flex: 1 1 auto; min-width: 0; justify-content: center; gap: 1px; }
+  .banner .name { font-weight: 600; }
+  .banner .sub { color: #3b5b78; }
+  .banner.night .sub { color: rgba(255,255,255,.78); }
+  /* The round icon on the sky, tinted by the status: accent when all is well, blue while testing, amber when slow, red without a result. */
+  .banner .type-icon { background: rgba(255,255,255,.62); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--st-tint) 25%, transparent); }
+  .banner .type-icon .icon { fill: color-mix(in srgb, var(--st-tint) 82%, #0d2a45); }
+  .banner.night .type-icon { background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }
+  .banner.night .type-icon .icon { fill: color-mix(in srgb, var(--st-tint) 62%, #fff); }
+  .banner .chip { line-height: 16px;
+                  background: color-mix(in srgb, var(--c) 18%, rgba(255,255,255,.78)); color: color-mix(in srgb, var(--c) 45%, #0d2a45); }
+  .banner.night .chip { background: color-mix(in srgb, var(--c) 30%, rgba(8,18,38,.55)); color: color-mix(in srgb, var(--c) 35%, #ffffff); }
+  .banner .chip .dot { width: 7px; height: 7px; }
+  /* The expand / collapse button: 24 px, round, frosted, in the banner's top right corner. */
+  .banner .zoom { position: absolute; z-index: 2; top: 5px; right: 5px; width: 24px; height: 24px; margin: 0; color: #33506b;
+                  background: rgba(255,255,255,.55); box-shadow: inset 0 0 0 1px rgba(255,255,255,.7);
+                  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  .banner .zoom:hover { background: rgba(255,255,255,.75); color: #33506b; }
+  .banner.night .zoom { color: #fff; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }
+  .banner.night .zoom:hover { background: rgba(255,255,255,.22); color: #fff; }
+  .st-night, .night .st-day { display: none; }
+  .night .st-night { display: inline; }
+  .st-sun { fill: #ffd65a; } .st-sun.halo { opacity: .28; }
+  .st-star { fill: #fff; opacity: .8; } .st-star.tw { animation: st-twinkle 3.2s ease-in-out infinite alternate; }
+  .st-moon { fill: #f3eed2; } .st-moon-cut { fill: #13254a; }
+  .st-hill { fill: #86c27f; } .st-hill.far { fill: #a7d39f; }
+  .night .st-hill { fill: #17303d; } .night .st-hill.far { fill: #1d3a4a; }
+  .st-poles { stroke: #8a939c; stroke-width: 1.2; } .night .st-poles { stroke: #7d8793; }
+  .st-cable { stroke: #5f6b7a; stroke-width: 1.6; fill: none; } .night .st-cable { stroke: #4a5568; }
+  .st-pulse { stroke: #2fd0ff; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-dasharray: 4 26; animation: st-pulse 1.4s linear infinite; }
+  .st-testing .st-pulse { stroke-dasharray: 6 12; animation-duration: .6s; }
+  .st-warn .st-pulse { stroke: #ffb02e; stroke-dasharray: 3 45; animation-duration: 3.2s; }
+  .st-crit .st-pulse { display: none; }
+  .st-crit .st-cable { stroke-dasharray: 3 3; }
+  .st-wall { fill: #f3e6d3; } .night .st-wall { fill: #2a3646; }
+  .st-roof { fill: #c0603a; } .night .st-roof { fill: #3a2a2a; }
+  .st-win { fill: #86b9de; } .night .st-win { fill: #ffcf6e; }
+  .st-door { fill: #8a5a3a; }
+  .st-glow { display: none; } .night .st-glow { display: inline; }
+  /* The gauge on the ground keeps the card's drawing, inked for the sky behind it. */
+  .st-gauge { --primary-text-color: #1d3550; --secondary-text-color: #4a6680; }
+  .night .st-gauge { --primary-text-color: #e8eef6; --secondary-text-color: #a9b8c8; }
+  .st-gauge .face { fill: rgba(255,255,255,.55); } .night .st-gauge .face { fill: rgba(255,255,255,.08); }
+  .st-gauge .box { fill: #eef2f6; } .night .st-gauge .box { fill: #2c3a4e; }
+  /* The gauge sits in the banner: the hero shows its text alone, unless the card is too narrow for the picture. */
+  .banner ~ .content .hero-art.gauge { display: none; }
+  @keyframes st-pulse { to { stroke-dashoffset: -30; } }
+  @keyframes st-twinkle { from { opacity: .3; } to { opacity: .9; } }
+  @container (max-width: 300px) {
+    .st-scene { display: none; }
+    .htext { right: 36px; }
+    .banner ~ .content .hero-art.gauge { display: grid; }
+  }
+  @container (max-width: 200px) {
+    .banner ~ .content.mini .hero-art.gauge { display: none; }
+  }
+`;
+
+let _stUid = 0;
 
 // ---------------------------------------------------------------------------
 // Cards
@@ -2471,7 +2772,7 @@ class SpeedtestCard extends CardBase {
   }
 
   _extraDeps() {
-    return [this._history, this._testing];
+    return [this._history, this._testing, this._hass?.states?.["sun.sun"]?.state];
   }
 
   _onConnect() {
@@ -2554,29 +2855,60 @@ class SpeedtestCard extends CardBase {
     return parts.join(" · ");
   }
 
+  // The header: the illustrated banner (title, subtitle and status chip on its sky, the scene at its right), or
+  // the classic header with `illustration: false`.
   _head(sum, sub) {
-    return this._header({ icon: ICONS.gauge, cls: sum.status.cls === "ok" ? "accent" : sum.status.cls, title: this._config.title || this._t("internet"), sub, chip: sum.status });
+    const cls = sum.status.cls === "ok" ? "accent" : sum.status.cls;
+    const title = this._config.title || this._t("internet");
+    if (this._config.illustration === false) return this._header({ icon: ICONS.gauge, cls, title, sub, chip: sum.status });
+    this._uid ??= ++_stUid;
+    const chip = sum.status;
+    const scene = stSceneSvg(this._uid, { cls: this._gaugeCls(sum), art: this._gaugeArt(sum) });
+    return `<div class="banner${this._renderMini && !this._zoomed ? " mini-banner" : ""} st-${sum.testing ? "testing" : sum.status.cls}${stIsNight(this._hass, this._config) ? " night" : ""}">
+        ${scene}<div class="st-ground" aria-hidden="true"></div>
+        <div class="htext">
+          <div class="type-icon ${cls}">${svgIcon(ICONS.wifi)}</div>
+          <div class="titles">
+            <div class="trow"><div class="name">${esc(title)}</div><span class="chip ${cls}${chip.entity ? " clickable" : ""}"${moreInfo(chip.entity)} title="${esc(chip.text)}" aria-label="${esc(chip.text)}"><span class="dot"></span><span class="chip-text">${esc(chip.text)}</span></span></div>
+            ${sub ? `<div class="sub" title="${esc(sub)}">${esc(sub)}</div>` : ""}
+          </div>
+        </div>
+        ${this._zoomButton()}
+      </div>`;
+  }
+
+  _styles() {
+    return this._config.illustration === false ? "" : ST_BANNER_STYLE;
   }
 
   // The gauge, a flat illustration: the download speed on a half dial with the plan's mark, a needle on it (it sweeps
   // the dial while a test runs) and a box whose light blinks during the test.
-  _gauge(m, sum) {
+  _gaugeCls(sum) {
+    const cls = sum.status.cls === "warn" || sum.status.cls === "crit" ? sum.status.cls : "accent";
+    return `gauge ${cls}${sum.testing ? " testing" : ""}`;
+  }
+
+  // The dial's drawing, in a 120 × 100 box: in the hero, and on the banner's ground.
+  _gaugeArt(sum) {
     const r = 44;
     const len = Math.PI * r;
     const p = sum.dl === null ? 0 : clamp(sum.dl / sum.max, 0, 1);
-    const cls = sum.status.cls === "warn" || sum.status.cls === "crit" ? sum.status.cls : "accent";
     const pt = (f, rr) => [60 - rr * Math.cos(Math.PI * f), 70 - rr * Math.sin(Math.PI * f)].map((v) => v.toFixed(1));
     const mark = sum.plan && sum.plan < sum.max ? (() => { const f = clamp(sum.plan / sum.max, 0, 1); const [x1, y1] = pt(f, r - 8); const [x2, y2] = pt(f, r + 8); return `<line class="mark" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke-width="2"/>`; })() : "";
     const deg = sum.testing ? 0 : p * 180;
-    return `<div class="hero-art gauge ${cls}${sum.testing ? " testing" : ""} clickable"${moreInfo(m.download)} aria-label="${esc(`${this._t("download")} ${this._speed(sum.dl)} ${this._t("mbps")}`)}">
-      <svg viewBox="0 0 120 100" aria-hidden="true">
-        <path class="track" d="M16 70 A${r} ${r} 0 0 1 104 70" fill="none" stroke-width="10" stroke-linecap="round"/>
+    return `<path class="track" d="M16 70 A${r} ${r} 0 0 1 104 70" fill="none" stroke-width="10" stroke-linecap="round"/>
         <path class="arc" d="M16 70 A${r} ${r} 0 0 1 104 70" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="${len.toFixed(1)}" style="stroke-dashoffset:${(len * (1 - p)).toFixed(1)}"/>
         ${mark}
         <g class="needle" style="transform: rotate(${deg.toFixed(1)}deg)"><line x1="60" y1="70" x2="26" y2="70" stroke-width="4" stroke-linecap="round"/></g>
         <circle class="hub" cx="60" cy="70" r="6"/>
         <rect class="box" x="36" y="84" width="48" height="12" rx="4"/>
-        <circle class="led" cx="46" cy="90" r="2"/><circle class="led" cx="54" cy="90" r="2"/><circle class="led blink" cx="62" cy="90" r="2"/>
+        <circle class="led" cx="46" cy="90" r="2"/><circle class="led" cx="54" cy="90" r="2"/><circle class="led blink" cx="62" cy="90" r="2"/>`;
+  }
+
+  _gauge(m, sum) {
+    return `<div class="hero-art ${this._gaugeCls(sum)} clickable"${moreInfo(m.download)} aria-label="${esc(`${this._t("download")} ${this._speed(sum.dl)} ${this._t("mbps")}`)}">
+      <svg viewBox="0 0 120 100" aria-hidden="true">
+        ${this._gaugeArt(sum)}
       </svg></div>`;
   }
 
@@ -2705,7 +3037,7 @@ class SpeedtestCard extends CardBase {
     if (c.show_stats !== false) parts.push(this._tiles(m, sum));
     const run = this._runButton(m, sum);
     if (run) parts.push(`<div class="foot">${run}${sum.last ? `<span class="note">${esc(this._t("last_test", { when: fmtRelative(this._hass, this._config, sum.last) }))}</span>` : ""}</div>`);
-    return `<style>${BASE_STYLE}${SPEED_STYLE}</style>
+    return `<style>${BASE_STYLE}${SPEED_STYLE}${this._styles()}</style>
       <ha-card>
         ${this._head(sum, this._subtitle(m, sum))}
         <div class="content">${parts.filter(Boolean).join("")}</div>
@@ -2725,7 +3057,7 @@ class SpeedtestMiniCard extends withMini(SpeedtestCard) {
     const cls = sum.status.cls === "warn" || sum.status.cls === "crit" ? sum.status.cls : "accent";
     const second = [m.upload ? `${this._speed(sum.ul)} ${this._t("mbps")}` : null, m.ping ? `${this._ms(sum.ping)} ${this._t("ms")}` : null].filter(Boolean).join(" · ");
     const run = this._runButton(m, sum, true);
-    return `<style>${BASE_STYLE}${SPEED_STYLE}${MINI_STYLE}</style>
+    return `<style>${BASE_STYLE}${SPEED_STYLE}${MINI_STYLE}${this._styles()}</style>
       <ha-card>
         ${this._head(sum, "")}
         <div class="content mini">
@@ -2747,6 +3079,7 @@ class SpeedtestMiniCard extends withMini(SpeedtestCard) {
 class SpeedtestCardEditor extends EditorBase {
   static get toggles() {
     return [
+      ["illustration", true],
       ["show_title", true],
       ["show_subtitle", true],
       ["show_history", true],
@@ -2756,7 +3089,7 @@ class SpeedtestCardEditor extends EditorBase {
   }
 
   static get defaults() {
-    return { history_days: 7, alert_ratio: 0.5, ping_alert: 100 };
+    return { history_days: 7, alert_ratio: 0.5, ping_alert: 100, illustration_theme: "auto" };
   }
 
   static get sections() {
@@ -2769,6 +3102,10 @@ class SpeedtestCardEditor extends EditorBase {
       { name: "upload", selector: { entity: { domain: "sensor" } } },
       { name: "ping", selector: { entity: { domain: "sensor" } } },
       { name: "button", selector: { entity: { domain: "button" } } },
+      {
+        name: "illustration_theme",
+        selector: { select: { mode: "dropdown", options: ["auto", "day", "night"].map((v) => ({ value: v, label: t(this._hass, this._config, `theme_${v}`) })) } },
+      },
       {
         type: "grid",
         name: "",

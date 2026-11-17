@@ -137,7 +137,8 @@ test("the history is read from the recorder: the download and upload sensors ove
 test("gauge, stats, chart with the plan and the slowest test, tiles", async () => {
   const { html } = await mount({ plan_download: 1000 });
   const h = html();
-  assert.match(h, /chip ok[^>]*>.*Normal/s);
+  // The pill takes the icon's colour (the accent when all is well), right after the title.
+  assert.match(h, /<div class="name">Internet speed<\/div>\s*<span class="chip accent[^>]*>.*Normal/s);
   assert.match(h, /Speedtest.net · 14 min. ago/);
   assert.match(h, /<b>942<\/b><span>Mbit\/s<\/span>/);
   assert.match(h, /612 Mbit\/s · Upload/);
@@ -157,7 +158,7 @@ test("slow: under half of the plan, else of the median of the week", async () =>
   assert.match((await mount({ plan_download: 1000 }, "slow")).html(), /chip warn[^>]*>.*Slow/s);
   // No plan: the median of the history (around 930 Mbit/s) is the reference.
   assert.match((await mount({}, "slow")).html(), /chip warn[^>]*>.*Slow/s);
-  assert.match((await mount({ plan_download: 400 }, "slow")).html(), /chip ok[^>]*>.*Normal/s);
+  assert.match((await mount({ plan_download: 400 }, "slow")).html(), /chip accent[^>]*>.*Normal/s);
 });
 
 test("run a test: Speedtest.net refreshes its download sensor; the card says it is testing until a new result", async () => {
@@ -264,4 +265,49 @@ test("a high ping does not colour the share of the plan: the speed is fine", asy
   const h = card.shadowRoot.innerHTML;
   assert.match(h, /class="chip warn/);
   assert.match(h, /class="line ok"[^>]*>.{0,400}94% of your plan/s);
+});
+
+test("illustrated header: the gauge on the banner, night from sun.sun or the theme, unique ids, classic header on request", async () => {
+  const { html } = await mount({ plan_download: 1000 });
+  assert.match(html(), /class="banner st-ok"/);
+  assert.match(html(), /class="st-gauge gauge accent"/);
+  assert.match(html(), /class="st-ground"/);
+  const ids = [html().match(/id="(st-glow-\d+)"/)[1], (await mount()).html().match(/id="(st-glow-\d+)"/)[1]];
+  assert.notEqual(ids[0], ids[1]);
+  const data = mockData();
+  data.states["sun.sun"] = { entity_id: "sun.sun", state: "below_horizon", attributes: {} };
+  assert.match((await mount({}, "default", SpeedtestCard, { data })).html(), /class="banner st-ok night"/);
+  assert.doesNotMatch((await mount({ illustration_theme: "day" }, "default", SpeedtestCard, { data })).html(), / night"/);
+  assert.match((await mount({ illustration_theme: "night" })).html(), / night"/);
+  assert.match((await mount({ plan_download: 1000 }, "slow")).html(), /class="banner st-warn"/);
+  const classic = (await mount({ illustration: false })).html();
+  assert.doesNotMatch(classic, /class="banner/);
+  assert.match(classic, /class="header"/);
+  assert.match((await mount({}, "default", SpeedtestMiniCard)).html(), /class="banner mini-banner st-ok"/);
+});
+
+test("illustrated header: the dark theme shows the night picture even while the sun is up; forced day/night win", async () => {
+  const sunUp = (darkMode) => {
+    const data = mockData();
+    data.states["sun.sun"] = { entity_id: "sun.sun", state: "above_horizon", attributes: {} };
+    data.themes = { darkMode };
+    return { data };
+  };
+  for (const Card of [SpeedtestCard, SpeedtestMiniCard]) {
+    assert.match((await mount({}, "default", Card, sunUp(true))).html(), /class="banner[^"]* night"/);
+    assert.doesNotMatch((await mount({}, "default", Card, sunUp(false))).html(), /class="banner[^"]* night"/);
+    assert.doesNotMatch((await mount({ illustration_theme: "day" }, "default", Card, sunUp(true))).html(), /class="banner[^"]* night"/);
+    assert.match((await mount({ illustration_theme: "night" }, "default", Card, sunUp(false))).html(), /class="banner[^"]* night"/);
+  }
+});
+
+test("status pill: on the title row or under the subtitle, measured (no fixed width), its dot at 200 px; the zoom button in the corner", async () => {
+  const { readFileSync } = await import("node:fs");
+  const src = readFileSync(new URL("../src/speedtest-card.js", import.meta.url), "utf8");
+  assert.match(src, /<div class="trow"><div class="name">\$\{esc\(title\)\}<\/div><span class="chip /);
+  assert.match(src, /\.titles\.pill-below \.trow \{ display: contents; \}/);
+  assert.doesNotMatch(src, /st-titles|max-width: 50%/);
+  assert.match(src, /@container st-card \(max-width: 200px\) \{\s*\.chip \{ padding: 4px; \}\s*\.chip-text \{[^}]*clip-path: inset\(50%\)/);
+  const zoom = src.match(/\n {2}\.banner \.zoom \{([^}]*)\}/)[1];
+  for (const d of [/position: absolute/, /top: 5px/, /right: 5px/, /width: 24px/, /height: 24px/]) assert.match(zoom, d);
 });

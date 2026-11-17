@@ -32,12 +32,13 @@ The sensors are **discovered automatically** from the Home Assistant entity and 
 ## Features
 
 - Two cards: a full **Speedtest Card** (`custom:speedtest-card`) and a compact **Speedtest Mini Card** (`custom:speedtest-mini-card`)
+- **Illustrated header** (90 px, full and mini card): the title on the sky, the card's gauge on a lawn with a fibre line on poles running to a house; light pulses run along the line (fast while a test runs, sparse and amber when the line is slow, none without a result). Day or night picture from `sun.sun` (else the dark theme), forced with `illustration_theme`; `illustration: false` brings back the classic header
 - **Download gauge**, drawn as an illustration: a half dial filled up to your plan's speed (`plan_download`, marked on the dial; without a plan, a round scale above the week's best) with its needle, the speed in large next to it
 - **Upload, ping, jitter and packet loss** in colored lines beside it, when the integration gives them, and the **share of your plan** reached
 - **History** of the last 7 days (`history_days`) from the recorder: download and upload lines, your plan as a dashed line, the **slowest test** marked and named ("Slowest 312 Mbit/s Fri 9:00 PM")
 - Average and slowest download of the period, the test **server** (and the provider, when known) as tiles; the slowest is tinted when it is slow
 - **Run a test** button, each integration its own way (see [Running a test](#running-a-test)); while a test runs, the needle sweeps the dial and the box's light blinks until the new result comes in (see [Animations](#animations))
-- Status chip on the title's line: **Normal**, **Slow** (under half of the plan, or of the week's median without a plan; `alert_ratio`), **High latency** (`ping_alert`), **Testing…**, **No result**
+- Status chip under the title (on the title's line in the classic header): **Normal**, **Slow** (under half of the plan, or of the week's median without a plan; `alert_ratio`), **High latency** (`ping_alert`), **Testing…**, **No result**
 - Header icon in a tinted round badge, in the colour of the status; the subtitle says which service measured and when
 - Collapsible history section, folded back to its default by a click elsewhere on the page
 - Click any value to open its Home Assistant history (more-info dialog)
@@ -131,6 +132,8 @@ plan_upload: 700
 history_days: 7
 alert_ratio: 0.5
 ping_alert: 100
+illustration: true
+illustration_theme: auto
 show_title: true
 show_subtitle: true
 show_history: true
@@ -152,6 +155,8 @@ zoom: true
 | Option | Card | Default | Description |
 |---|---|---|---|
 | `title` | both | Internet speed | Card title |
+| `illustration` | both | `true` | Illustrated header (sky, gauge, fibre line, house on a lawn strip); `false` shows the classic header |
+| `illustration_theme` | both | `auto` | Picture of the illustrated header: `auto` (night when `sun.sun` is below the horizon or with Home Assistant's dark theme, even while the sun is up), `day` or `night` |
 | `show_title` | both | `true` | Show the title in the header |
 | `show_subtitle` | full | `true` | Show the subtitle (the service and when it measured) |
 | `device` | both | First found | Device (its name or id) of a supported integration, when you have several |
@@ -185,7 +190,7 @@ The card shows *Testing…* until the download sensor reports a new result (90 s
 
 ### Animations
 
-While a test runs, the needle sweeps the dial back and forth, the box's light blinks and the button's icon turns; the animation honours `prefers-reduced-motion`:
+While a test runs, the needle sweeps the dial back and forth, the box's light blinks, light pulses race along the fibre line of the header and the button's icon turns; the animation honours `prefers-reduced-motion`:
 
 | Light | Dark |
 |---|---|
