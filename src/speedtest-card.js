@@ -1583,16 +1583,27 @@ const BASE_STYLE = `
   .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c, var(--st-ok)); flex: none; display: inline-block; }
   .chip { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; white-space: nowrap;
           background: color-mix(in srgb, var(--c, var(--st-ok)) 15%, transparent); color: color-mix(in srgb, var(--c, var(--st-ok)) 50%, var(--primary-text-color));
-          flex: 0 1 auto; min-width: 0; max-width: 50%; overflow: hidden; box-sizing: border-box; }
-  .chip-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+          flex: none; box-sizing: border-box; }
+  .chip-text { white-space: nowrap; }
   .header { display: flex; align-items: center; gap: 10px; padding: 12px 12px 0; }
-  /* The chip sits on the title's line, whether a subtitle follows or not. */
-  .header .chip, .header .zoom { align-self: flex-start; margin-top: 10px; }
+  .header .zoom { align-self: flex-start; margin-top: 10px; }
+  /* The status pill (classic header and banner): on the title row, 8 px after the title, only when the whole title
+     and the pill's whole label fit there; otherwise on its own line under the subtitle, which then keeps one line.
+     Its dot alone at 200 px or less, or when the banner has no room left for its label (pill-dot): the label stays
+     in its title and for screen readers. Measured after each render (_fitPill), in every language, never by a fixed
+     width. */
+  .trow { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .trow .name { flex: 0 1 auto; min-width: 0; }
+  .titles.pill-below .trow { display: contents; }
+  .titles.pill-below .sub { order: 1; }
+  .titles.pill-below .chip { order: 2; align-self: flex-start; margin-top: 2px; }
+  .titles.pill-dot .chip { padding: 4px; }
+  .titles.pill-dot .chip-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .type-icon { position: relative; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none;
                --st-tint: var(--c, var(--st-accent)); background: color-mix(in srgb, var(--st-tint) 16%, transparent); transition: background-color .3s ease; }
   .type-icon .icon { width: 24px; height: 24px; fill: color-mix(in srgb, var(--st-tint) 60%, var(--primary-text-color)); transition: fill .3s ease; }
-  .titles { flex: 1 1 0; min-width: 5ch; }
-  :host([hide-title]) .titles > .name, :host([hide-subtitle]) .titles > .sub { display: none; }
+  .titles { flex: 1 1 0; min-width: 5ch; display: flex; flex-direction: column; }
+  :host([hide-title]) .titles .name, :host([hide-subtitle]) .titles > .sub { display: none; }
   .name { font-size: 16px; font-weight: 500; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .warning { padding: 16px; color: color-mix(in srgb, var(--st-warn) 50%, var(--primary-text-color)); }
@@ -1679,13 +1690,11 @@ const BASE_STYLE = `
   .pill .icon { width: 14px; height: 14px; color: var(--c, var(--st-idle)); }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
   @container st-card (max-width: 230px) {
-    .header .chip { padding: 4px; flex: none; }
-    .header .chip-text { display: none; }
     .header { gap: 6px; }
   }
   @container st-card (max-width: 200px) {
-    .banner .chip { padding: 4px; }
-    .banner .chip-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .chip { padding: 4px; }
+    .chip-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   }
 `;
 
@@ -1917,6 +1926,7 @@ class CardBase extends HTMLElement {
       },
     );
     this._outside.on();
+    this._watchPill();
     if (this._dialog) window.addEventListener("keydown", this._onKey);
     clearInterval(this._tick);
     this._tick = setInterval(() => {
@@ -1934,12 +1944,60 @@ class CardBase extends HTMLElement {
     clearInterval(this._countdown);
     this._tick = this._countdown = null;
     this._outside?.off();
+    this._unwatchPill();
     window.removeEventListener("keydown", this._onKey);
     this._onDisconnect?.();
     // Left (another dashboard view, a conditional card hidden): back to the defaults, so that the card does not come
     // back unfolded or with its popup open.
     this._toggled = new Map();
     this._dialog = null;
+  }
+
+  // The status pill goes on the title row, right after the title, only when the whole title and the pill's whole
+  // label fit there; otherwise it takes its own line under the subtitle (the subtitle then on one line). In the
+  // banner, when title, subtitle and pill still do not fit above the ground strip (or the pill's label runs past the
+  // text, over the picture), the pill keeps its dot only.
+  // Measured after each render and on every new width (or once the web font is loaded), never by a fixed width.
+  _fitPill() {
+    for (const t of this.shadowRoot?.querySelectorAll?.(".titles") || []) {
+      const row = t.querySelector?.(".trow");
+      const name = row?.querySelector(".name");
+      const chips = row ? [...row.children].filter((n) => n.classList.contains("chip")) : [];
+      if (!name?.getBoundingClientRect || !chips.length) continue;
+      t.classList.remove("pill-below", "pill-dot");
+      // The title's whole width (scrollWidth is rounded: 1 px more, so that a title that fits is never cut).
+      const need = chips.reduce((w, c) => w + PILL_GAP_PX + c.getBoundingClientRect().width, name.scrollWidth + 1);
+      if (need <= row.getBoundingClientRect().width + 0.5) continue;
+      t.classList.add("pill-below");
+      const banner = t.closest(".banner");
+      if (!banner) continue;
+      const box = banner.getBoundingClientRect();
+      const ground = box.bottom - PILL_GROUND_PX;
+      const right = t.getBoundingClientRect().right;
+      const out = [name, ...t.querySelectorAll(".sub"), ...chips].some((n) => {
+        const r = n.getBoundingClientRect();
+        return r.height > 0 && (r.top < box.top - 0.5 || r.bottom > ground + 0.5 || r.right > right + 0.5);
+      });
+      if (out) t.classList.add("pill-dot");
+    }
+  }
+
+  _watchPill() {
+    if (typeof ResizeObserver !== "function") return;
+    this._pillResize ??= new ResizeObserver((entries) => {
+      const w = Math.round(entries.at(-1).contentRect.width);
+      if (w === this._pillWidth) return;
+      this._pillWidth = w;
+      cancelAnimationFrame(this._pillFrame);
+      this._pillFrame = requestAnimationFrame(() => this._fitPill());
+    });
+    this._pillResize.observe(this);
+    document.fonts?.ready?.then(() => this._fitPill());
+  }
+
+  _unwatchPill() {
+    this._pillResize?.disconnect();
+    this._pillWidth = null;
   }
 
   _t(key, vars) {
@@ -1996,6 +2054,7 @@ class CardBase extends HTMLElement {
       const kept = this._dialog || this._byPointer ? null : this._focusedSpot();
       this._html = html;
       this.shadowRoot.innerHTML = html;
+      this._fitPill();
       // Fields get back what was typed, and the caret when one had the focus.
       for (const el of this.shadowRoot.querySelectorAll?.("[data-keep]") || []) {
         const v = this._inputs[el.dataset.keep];
@@ -2174,16 +2233,15 @@ class CardBase extends HTMLElement {
       <div class="header">
         <div class="type-icon ${cls}">${extra}${svgIcon(icon)}</div>
         <div class="titles">
-          <div class="name">${esc(title)}</div>
-          ${sub ? `<div class="sub">${esc(sub)}</div>` : ""}
+          <div class="trow"><div class="name">${esc(title)}</div>${
+            chip
+              ? `<span class="chip ${chip.cls}${chip.entity ? " clickable" : ""}"${moreInfo(chip.entity)} title="${esc(chip.text)}" aria-label="${esc(
+                  chip.text,
+                )}"><span class="dot"></span><span class="chip-text">${esc(chip.text)}</span></span>`
+              : ""
+          }</div>
+          ${sub ? `<div class="sub" title="${esc(sub)}">${esc(sub)}</div>` : ""}
         </div>
-        ${
-          chip
-            ? `<span class="chip ${chip.cls}${chip.entity ? " clickable" : ""}"${moreInfo(chip.entity)} title="${esc(chip.text)}" aria-label="${esc(
-                chip.text,
-              )}"><span class="dot"></span><span class="chip-text">${esc(chip.text)}</span></span>`
-            : ""
-        }
         ${this._zoomButton()}
       </div>`;
   }
@@ -2605,6 +2663,11 @@ const stIsNight = (hass, config) => {
   return !!hass?.themes?.darkMode;
 };
 
+// The banner's ground strip (the lawn), that the title block keeps clear of, and the gap between the title and the
+// status pill on its row (.trow).
+const PILL_GROUND_PX = 10;
+const PILL_GAP_PX = 8;
+
 const ST_BANNER_STYLE = `
   .banner { position: relative; overflow: hidden; height: 90px; color: #0d2a45; --st-scene-w: min(224px, 46cqw);
             background: linear-gradient(90deg, #f1f8ff 0%, #e2f1fd 34%, #b9def8 70%, #9fd0f3 100%); }
@@ -2614,14 +2677,8 @@ const ST_BANNER_STYLE = `
   .night .st-ground { background: repeating-linear-gradient(90deg, #1f4a2a 0 22px, #245433 22px 44px); }
   .st-scene { position: absolute; right: 0; bottom: 10px; width: var(--st-scene-w); height: 80px; overflow: visible; }
   .htext { position: absolute; left: 12px; top: 0; bottom: 10px; right: calc(var(--st-scene-w) + 4px); display: flex; align-items: center; gap: 10px; min-width: 0; }
-  /* Title row: the title, then the status pill 8 px after it (in the icon's colour), both shrinking (the title keeps a
-     few characters, the pill at most about half the row); the subtitle under them. Short of room the pill takes its
-     own line under the subtitle; on a very narrow card only its dot shows (its text stays in its title and for
-     screen readers). */
-  .htext .titles { flex: 1 1 auto; min-width: 0; display: grid; row-gap: 1px; column-gap: 8px; align-items: center; justify-content: start;
-                   grid-template-columns: minmax(min(4.5ch, 100%), max-content) minmax(0, max-content); container: st-titles / inline-size; }
-  .htext .titles > .sub { grid-column: 1 / -1; }
-  @container st-titles (max-width: 160px) { .htext .titles > .chip { grid-column: 1 / -1; grid-row: 3; margin-top: 2px; } }
+  /* Title row: the title, then the status pill 8 px after it (in the icon's colour, see .trow); the subtitle under. */
+  .htext .titles { flex: 1 1 auto; min-width: 0; justify-content: center; gap: 1px; }
   .banner .name { font-weight: 600; }
   .banner .sub { color: #3b5b78; }
   .banner.night .sub { color: rgba(255,255,255,.78); }
@@ -2630,7 +2687,7 @@ const ST_BANNER_STYLE = `
   .banner .type-icon .icon { fill: color-mix(in srgb, var(--st-tint) 82%, #0d2a45); }
   .banner.night .type-icon { background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }
   .banner.night .type-icon .icon { fill: color-mix(in srgb, var(--st-tint) 62%, #fff); }
-  .banner .chip { justify-self: start; max-width: 100%; line-height: 16px;
+  .banner .chip { line-height: 16px;
                   background: color-mix(in srgb, var(--c) 18%, rgba(255,255,255,.78)); color: color-mix(in srgb, var(--c) 45%, #0d2a45); }
   .banner.night .chip { background: color-mix(in srgb, var(--c) 30%, rgba(8,18,38,.55)); color: color-mix(in srgb, var(--c) 35%, #ffffff); }
   .banner .chip .dot { width: 7px; height: 7px; }
@@ -2812,9 +2869,8 @@ class SpeedtestCard extends CardBase {
         <div class="htext">
           <div class="type-icon ${cls}">${svgIcon(ICONS.wifi)}</div>
           <div class="titles">
-            <div class="name">${esc(title)}</div>
-            <span class="chip ${cls}${chip.entity ? " clickable" : ""}"${moreInfo(chip.entity)} title="${esc(chip.text)}" aria-label="${esc(chip.text)}"><span class="dot"></span><span class="chip-text">${esc(chip.text)}</span></span>
-            ${sub ? `<div class="sub">${esc(sub)}</div>` : ""}
+            <div class="trow"><div class="name">${esc(title)}</div><span class="chip ${cls}${chip.entity ? " clickable" : ""}"${moreInfo(chip.entity)} title="${esc(chip.text)}" aria-label="${esc(chip.text)}"><span class="dot"></span><span class="chip-text">${esc(chip.text)}</span></span></div>
+            ${sub ? `<div class="sub" title="${esc(sub)}">${esc(sub)}</div>` : ""}
           </div>
         </div>
         ${this._zoomButton()}
