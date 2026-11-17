@@ -265,3 +265,22 @@ test("a high ping does not colour the share of the plan: the speed is fine", asy
   assert.match(h, /class="chip warn/);
   assert.match(h, /class="line ok"[^>]*>.{0,400}94% of your plan/s);
 });
+
+test("illustrated header: the gauge on the banner, night from sun.sun or the theme, unique ids, classic header on request", async () => {
+  const { html } = await mount({ plan_download: 1000 });
+  assert.match(html(), /class="banner st-ok"/);
+  assert.match(html(), /class="st-gauge gauge accent"/);
+  assert.match(html(), /class="st-ground"/);
+  const ids = [html().match(/id="(st-glow-\d+)"/)[1], (await mount()).html().match(/id="(st-glow-\d+)"/)[1]];
+  assert.notEqual(ids[0], ids[1]);
+  const data = mockData();
+  data.states["sun.sun"] = { entity_id: "sun.sun", state: "below_horizon", attributes: {} };
+  assert.match((await mount({}, "default", SpeedtestCard, { data })).html(), /class="banner st-ok night"/);
+  assert.doesNotMatch((await mount({ illustration_theme: "day" }, "default", SpeedtestCard, { data })).html(), / night"/);
+  assert.match((await mount({ illustration_theme: "night" })).html(), / night"/);
+  assert.match((await mount({ plan_download: 1000 }, "slow")).html(), /class="banner st-warn"/);
+  const classic = (await mount({ illustration: false })).html();
+  assert.doesNotMatch(classic, /class="banner/);
+  assert.match(classic, /class="header"/);
+  assert.match((await mount({}, "default", SpeedtestMiniCard)).html(), /class="banner mini-banner st-ok"/);
+});
