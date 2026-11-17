@@ -286,6 +286,21 @@ test("illustrated header: the gauge on the banner, night from sun.sun or the the
   assert.match((await mount({}, "default", SpeedtestMiniCard)).html(), /class="banner mini-banner st-ok"/);
 });
 
+test("illustrated header: the dark theme shows the night picture even while the sun is up; forced day/night win", async () => {
+  const sunUp = (darkMode) => {
+    const data = mockData();
+    data.states["sun.sun"] = { entity_id: "sun.sun", state: "above_horizon", attributes: {} };
+    data.themes = { darkMode };
+    return { data };
+  };
+  for (const Card of [SpeedtestCard, SpeedtestMiniCard]) {
+    assert.match((await mount({}, "default", Card, sunUp(true))).html(), /class="banner[^"]* night"/);
+    assert.doesNotMatch((await mount({}, "default", Card, sunUp(false))).html(), /class="banner[^"]* night"/);
+    assert.doesNotMatch((await mount({ illustration_theme: "day" }, "default", Card, sunUp(true))).html(), /class="banner[^"]* night"/);
+    assert.match((await mount({ illustration_theme: "night" }, "default", Card, sunUp(false))).html(), /class="banner[^"]* night"/);
+  }
+});
+
 test("illustrated header: the status pill follows the title, moves under the subtitle short of room, then only its dot shows; the zoom button in the corner", async () => {
   const { readFileSync } = await import("node:fs");
   const src = readFileSync(new URL("../src/speedtest-card.js", import.meta.url), "utf8");
