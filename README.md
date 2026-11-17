@@ -32,7 +32,7 @@ The sensors are **discovered automatically** from the Home Assistant entity and 
 ## Features
 
 - Two cards: a full **Speedtest Card** (`custom:speedtest-card`) and a compact **Speedtest Mini Card** (`custom:speedtest-mini-card`)
-- **Illustrated header** (90 px, full and mini card): the title on the sky, the card's gauge on a lawn with a fibre line on poles running to a house; light pulses run along the line (fast while a test runs, sparse and amber when the line is slow, none without a result). Day or night picture from `sun.sun` (else the dark theme), forced with `illustration_theme`; `illustration: false` brings back the classic header
+- **Illustrated header** (90 px, full and mini card): the title on the sky, the card's gauge on a lawn with a fibre line on poles running to a house; light pulses run along the line (fast while a test runs, sparse and amber when the line is slow, none without a result). Day or night picture following the Home Assistant theme (night with a dark theme), forced with `illustration_theme`; `illustration: false` brings back the classic header
 - **Download gauge**, drawn as an illustration: a half dial filled up to your plan's speed (`plan_download`, marked on the dial; without a plan, a round scale above the week's best) with its needle, the speed in large next to it
 - **Upload, ping, jitter and packet loss** in colored lines beside it, when the integration gives them, and the **share of your plan** reached
 - **History** of the last 7 days (`history_days`) from the recorder: download and upload lines, your plan as a dashed line, the **slowest test** marked and named ("Slowest 312 Mbit/s Fri 9:00 PM")
@@ -156,7 +156,7 @@ zoom: true
 |---|---|---|---|
 | `title` | both | Internet speed | Card title |
 | `illustration` | both | `true` | Illustrated header (sky, gauge, fibre line, house on a lawn strip); `false` shows the classic header |
-| `illustration_theme` | both | `auto` | Picture of the illustrated header: `auto` (night when `sun.sun` is below the horizon or with Home Assistant's dark theme, even while the sun is up), `day` or `night` |
+| `illustration_theme` | both | `auto` | Picture of the illustrated header: `auto` (follows the Home Assistant theme: night with a dark theme, day with a light theme), `day` or `night` |
 | `show_title` | both | `true` | Show the title in the header |
 | `show_subtitle` | full | `true` | Show the subtitle (the service and when it measured) |
 | `device` | both | First found | Device (its name or id) of a supported integration, when you have several |
