@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.3.0 - 2026-11-20
+
+### Features
+- Visual editor: the jitter sensor and the device of the speed test (when you have several), translated in every language.
+
+### Fixes
+- The history is converted to Mbit/s with the sensor's unit, as the current value: a sensor in kbit/s, MB/s or MiB/s no longer skews the chart, the average, the slowest test and the median that *Slow* is measured against.
+- `upload`, `ping` and `jitter` set in the configuration are used without a `download` sensor too (they were ignored).
+- `plan_upload` is used: the upload line turns amber under `alert_ratio` of it.
+- The mini card's description in the card picker no longer mentions a sparkline it does not have.
+
 ## 1.2.1 - 2026-11-18
 
 ### Fixes
