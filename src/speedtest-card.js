@@ -72,6 +72,8 @@ const STRINGS = {
     download_field: "Download sensor (empty: automatic)",
     upload_field: "Upload sensor (optional)",
     ping_field: "Ping sensor (optional)",
+    jitter_field: "Jitter sensor (optional)",
+    device_field: "Device (empty: the first one found)",
     button: "Button that runs a test (optional)",
     plan_download: "Plan download (Mbit/s)",
     plan_upload: "Plan upload (Mbit/s)",
@@ -135,6 +137,8 @@ const STRINGS = {
     download_field: "Capteur de réception (vide : automatique)",
     upload_field: "Capteur d'envoi (facultatif)",
     ping_field: "Capteur de ping (facultatif)",
+    jitter_field: "Capteur de gigue (facultatif)",
+    device_field: "Appareil (vide : le premier trouvé)",
     button: "Bouton qui lance un test (facultatif)",
     plan_download: "Réception de l'abonnement (Mbit/s)",
     plan_upload: "Envoi de l'abonnement (Mbit/s)",
@@ -198,6 +202,8 @@ const STRINGS = {
     download_field: "Download-Sensor (leer: automatisch)",
     upload_field: "Upload-Sensor (optional)",
     ping_field: "Ping-Sensor (optional)",
+    jitter_field: "Jitter-Sensor (optional)",
+    device_field: "Gerät (leer: das erste gefundene)",
     button: "Button, der einen Test startet (optional)",
     plan_download: "Download laut Tarif (Mbit/s)",
     plan_upload: "Upload laut Tarif (Mbit/s)",
@@ -261,6 +267,8 @@ const STRINGS = {
     download_field: "Sensor de descarga (vacío: automático)",
     upload_field: "Sensor de subida (opcional)",
     ping_field: "Sensor de ping (opcional)",
+    jitter_field: "Sensor de jitter (opcional)",
+    device_field: "Dispositivo (vacío: el primero encontrado)",
     button: "Botón que lanza una prueba (opcional)",
     plan_download: "Descarga contratada (Mbit/s)",
     plan_upload: "Subida contratada (Mbit/s)",
@@ -324,6 +332,8 @@ const STRINGS = {
     download_field: "Sensore di download (vuoto: automatico)",
     upload_field: "Sensore di upload (facoltativo)",
     ping_field: "Sensore di ping (facoltativo)",
+    jitter_field: "Sensore di jitter (facoltativo)",
+    device_field: "Dispositivo (vuoto: il primo trovato)",
     button: "Pulsante che avvia un test (facoltativo)",
     plan_download: "Download dell'abbonamento (Mbit/s)",
     plan_upload: "Upload dell'abbonamento (Mbit/s)",
@@ -387,6 +397,8 @@ const STRINGS = {
     download_field: "Downloadsensor (leeg: automatisch)",
     upload_field: "Uploadsensor (optioneel)",
     ping_field: "Pingsensor (optioneel)",
+    jitter_field: "Jittersensor (optioneel)",
+    device_field: "Apparaat (leeg: het eerst gevonden)",
     button: "Knop die een test start (optioneel)",
     plan_download: "Download van het abonnement (Mbit/s)",
     plan_upload: "Upload van het abonnement (Mbit/s)",
@@ -450,6 +462,8 @@ const STRINGS = {
     download_field: "Sensor de download (vazio: automático)",
     upload_field: "Sensor de upload (opcional)",
     ping_field: "Sensor de ping (opcional)",
+    jitter_field: "Sensor de jitter (opcional)",
+    device_field: "Dispositivo (vazio: o primeiro encontrado)",
     button: "Botão que faz um teste (opcional)",
     plan_download: "Download do tarifário (Mbit/s)",
     plan_upload: "Upload do tarifário (Mbit/s)",
@@ -513,6 +527,8 @@ const STRINGS = {
     download_field: "Czujnik pobierania (puste: automatycznie)",
     upload_field: "Czujnik wysyłania (opcjonalnie)",
     ping_field: "Czujnik pingu (opcjonalnie)",
+    jitter_field: "Czujnik jittera (opcjonalnie)",
+    device_field: "Urządzenie (puste: pierwsze znalezione)",
     button: "Przycisk uruchamiający test (opcjonalnie)",
     plan_download: "Pobieranie w abonamencie (Mb/s)",
     plan_upload: "Wysyłanie w abonamencie (Mb/s)",
@@ -576,6 +592,8 @@ const STRINGS = {
     download_field: "Сензор преузимања (празно: аутоматски)",
     upload_field: "Сензор слања (опционо)",
     ping_field: "Сензор пинга (опционо)",
+    jitter_field: "Сензор џитера (опционо)",
+    device_field: "Уређај (празно: први пронађени)",
     button: "Дугме које покреће тест (опционо)",
     plan_download: "Преузимање по пакету (Mbit/s)",
     plan_upload: "Слање по пакету (Mbit/s)",
@@ -639,6 +657,8 @@ const STRINGS = {
     download_field: "Senzor preuzimanja (prazno: automatski)",
     upload_field: "Senzor slanja (opciono)",
     ping_field: "Senzor pinga (opciono)",
+    jitter_field: "Senzor džitera (opciono)",
+    device_field: "Uređaj (prazno: prvi pronađeni)",
     button: "Dugme koje pokreće test (opciono)",
     plan_download: "Preuzimanje po paketu (Mbit/s)",
     plan_upload: "Slanje po paketu (Mbit/s)",
@@ -702,6 +722,8 @@ const STRINGS = {
     download_field: "Senzor de descărcare (gol: automat)",
     upload_field: "Senzor de încărcare (opțional)",
     ping_field: "Senzor de ping (opțional)",
+    jitter_field: "Senzor de jitter (opțional)",
+    device_field: "Dispozitiv (gol: primul găsit)",
     button: "Buton care rulează un test (opțional)",
     plan_download: "Descărcare din abonament (Mbit/s)",
     plan_upload: "Încărcare din abonament (Mbit/s)",
@@ -765,6 +787,8 @@ const STRINGS = {
     download_field: "Downloadsensor (tom: automatisk)",
     upload_field: "Uploadsensor (valgfri)",
     ping_field: "Pingsensor (valgfri)",
+    jitter_field: "Jittersensor (valgfri)",
+    device_field: "Enhed (tom: den første fundne)",
     button: "Knap, der kører en test (valgfri)",
     plan_download: "Abonnementets download (Mbit/s)",
     plan_upload: "Abonnementets upload (Mbit/s)",
@@ -828,6 +852,8 @@ const STRINGS = {
     download_field: "Nedladdningssensor (tom: automatiskt)",
     upload_field: "Uppladdningssensor (valfri)",
     ping_field: "Pingsensor (valfri)",
+    jitter_field: "Jittersensor (valfri)",
+    device_field: "Enhet (tom: den första som hittas)",
     button: "Knapp som kör ett test (valfri)",
     plan_download: "Abonnemangets nedladdning (Mbit/s)",
     plan_upload: "Abonnemangets uppladdning (Mbit/s)",
@@ -891,6 +917,8 @@ const STRINGS = {
     download_field: "Сензор за изтегляне (празно: автоматично)",
     upload_field: "Сензор за качване (по избор)",
     ping_field: "Сензор за пинг (по избор)",
+    jitter_field: "Сензор за джитер (по избор)",
+    device_field: "Устройство (празно: първото намерено)",
     button: "Бутон, който пуска тест (по избор)",
     plan_download: "Изтегляне по абонамент (Mbit/s)",
     plan_upload: "Качване по абонамент (Mbit/s)",
@@ -954,6 +982,8 @@ const STRINGS = {
     download_field: "Датчик загрузки (пусто: автоматически)",
     upload_field: "Датчик отдачи (необязательно)",
     ping_field: "Датчик пинга (необязательно)",
+    jitter_field: "Датчик джиттера (необязательно)",
+    device_field: "Устройство (пусто: первое найденное)",
     button: "Кнопка запуска теста (необязательно)",
     plan_download: "Загрузка по тарифу (Мбит/с)",
     plan_upload: "Отдача по тарифу (Мбит/с)",
@@ -1017,6 +1047,8 @@ const STRINGS = {
     download_field: "Датчик завантаження (порожньо: автоматично)",
     upload_field: "Датчик відвантаження (необов'язково)",
     ping_field: "Датчик пінгу (необов'язково)",
+    jitter_field: "Датчик джитера (необов'язково)",
+    device_field: "Пристрій (порожньо: перший знайдений)",
     button: "Кнопка запуску тесту (необов'язково)",
     plan_download: "Завантаження за тарифом (Мбіт/с)",
     plan_upload: "Відвантаження за тарифом (Мбіт/с)",
@@ -1080,6 +1112,8 @@ const STRINGS = {
     download_field: "Letöltési érzékelő (üres: automatikus)",
     upload_field: "Feltöltési érzékelő (opcionális)",
     ping_field: "Ping érzékelő (opcionális)",
+    jitter_field: "Jitter érzékelő (opcionális)",
+    device_field: "Eszköz (üres: az első talált)",
     button: "Mérést indító gomb (opcionális)",
     plan_download: "Előfizetett letöltés (Mbit/s)",
     plan_upload: "Előfizetett feltöltés (Mbit/s)",
@@ -1143,6 +1177,8 @@ const STRINGS = {
     download_field: "Senzor sťahovania (prázdne: automaticky)",
     upload_field: "Senzor odosielania (voliteľné)",
     ping_field: "Senzor pingu (voliteľné)",
+    jitter_field: "Senzor jitteru (voliteľné)",
+    device_field: "Zariadenie (prázdne: prvé nájdené)",
     button: "Tlačidlo, ktoré spustí test (voliteľné)",
     plan_download: "Sťahovanie podľa paušálu (Mb/s)",
     plan_upload: "Odosielanie podľa paušálu (Mb/s)",
@@ -1206,6 +1242,8 @@ const STRINGS = {
     download_field: "Senzor stahování (prázdné: automaticky)",
     upload_field: "Senzor odesílání (volitelné)",
     ping_field: "Senzor pingu (volitelné)",
+    jitter_field: "Senzor jitteru (volitelné)",
+    device_field: "Zařízení (prázdné: první nalezené)",
     button: "Tlačítko, které spustí test (volitelné)",
     plan_download: "Stahování podle tarifu (Mb/s)",
     plan_upload: "Odesílání podle tarifu (Mb/s)",
@@ -1269,6 +1307,8 @@ const STRINGS = {
     download_field: "Senzor prenosa (prazno: samodejno)",
     upload_field: "Senzor nalaganja (neobvezno)",
     ping_field: "Senzor pinga (neobvezno)",
+    jitter_field: "Senzor trepetanja (neobvezno)",
+    device_field: "Naprava (prazno: prva najdena)",
     button: "Gumb, ki zažene test (neobvezno)",
     plan_download: "Prenos po paketu (Mbit/s)",
     plan_upload: "Nalaganje po paketu (Mbit/s)",
@@ -1332,6 +1372,8 @@ const STRINGS = {
     download_field: "Lejupielādes sensors (tukšs: automātiski)",
     upload_field: "Augšupielādes sensors (neobligāts)",
     ping_field: "Pinga sensors (neobligāts)",
+    jitter_field: "Džitera sensors (neobligāts)",
+    device_field: "Ierīce (tukšs: pirmā atrastā)",
     button: "Poga, kas palaiž testu (neobligāta)",
     plan_download: "Plāna lejupielāde (Mbit/s)",
     plan_upload: "Plāna augšupielāde (Mbit/s)",
@@ -1395,6 +1437,8 @@ const STRINGS = {
     download_field: "Αισθητήρας λήψης (κενό: αυτόματα)",
     upload_field: "Αισθητήρας αποστολής (προαιρετικό)",
     ping_field: "Αισθητήρας ping (προαιρετικό)",
+    jitter_field: "Αισθητήρας jitter (προαιρετικό)",
+    device_field: "Συσκευή (κενό: η πρώτη που βρέθηκε)",
     button: "Κουμπί που εκτελεί δοκιμή (προαιρετικό)",
     plan_download: "Λήψη προγράμματος (Mbit/s)",
     plan_upload: "Αποστολή προγράμματος (Mbit/s)",
@@ -1907,7 +1951,7 @@ class CardBase extends HTMLElement {
   _resolve() {
     const h = this._hass;
     if (!h?.entities || !h?.devices) return null;
-    const key = [h.entities, h.devices, h.areas, Object.keys(h.states).length];
+    const key = [h.entities, h.devices, h.areas, stateCount(h.states)];
     if (this._model && this._modelKey?.every((k, i) => k === key[i])) return this._model;
     this._modelKey = key;
     this._model = this._build();
@@ -1928,6 +1972,8 @@ class CardBase extends HTMLElement {
     this._outside.on();
     this._watchPill();
     if (this._dialog) window.addEventListener("keydown", this._onKey);
+    // A speed test started before the card left the page: its end is drawn on time again.
+    if (this._testing) this._armTest(TEST_MS - (Date.now() - this._testing));
     clearInterval(this._tick);
     this._tick = setInterval(() => {
       if (this._hass) this.hass = this._hass;
@@ -1942,7 +1988,9 @@ class CardBase extends HTMLElement {
     window.removeEventListener("pointercancel", this._onPressEnd, true);
     clearInterval(this._tick);
     clearInterval(this._countdown);
-    this._tick = this._countdown = null;
+    clearTimeout(this._testTimer);
+    if (this._pillFrame) cancelAnimationFrame(this._pillFrame);
+    this._tick = this._countdown = this._testTimer = this._pillFrame = null;
     this._outside?.off();
     this._unwatchPill();
     window.removeEventListener("keydown", this._onKey);
@@ -2454,11 +2502,11 @@ const UNIT_MBPS = {
   kbps: 1e-3,
   gbps: 1e3,
 };
+// The factor that turns a sensor's values into Mbit/s (1 for Mbit/s or an unknown unit).
+const mbpsFactor = (s) => UNIT_MBPS[String(s?.attributes?.unit_of_measurement || "Mbit/s").toLowerCase()] ?? 1;
 const toMbps = (s) => {
   const v = num(s);
-  if (v === null) return null;
-  const u = String(s.attributes?.unit_of_measurement || "Mbit/s").toLowerCase();
-  return v * (UNIT_MBPS[u] ?? 1);
+  return v === null ? null : v * mbpsFactor(s);
 };
 
 // The sensors of a speed test among a list of registry entries: download, upload, ping, jitter, packet loss, server,
@@ -2484,12 +2532,22 @@ const findSensors = (hass, list) => {
 
 const _cache = new WeakMap();
 
+// The number of states, counted once per `hass.states` object (a new one comes with each state change): both the
+// card's and the model's lookups ask for it on every push.
+const COUNTS = new WeakMap();
+const stateCount = (states) => {
+  if (!states) return 0;
+  let n = COUNTS.get(states);
+  if (n === undefined) COUNTS.set(states, (n = Object.keys(states).length));
+  return n;
+};
+
 // The speed test of the configuration, else of the first supported integration found (or the configured device).
 // Returns { platform, name, download, upload, ping, jitter, loss, server, isp, last, button } (entity ids).
 const resolve = (hass, config) => {
   let per = _cache.get(hass.entities);
   if (!per) _cache.set(hass.entities, (per = new Map()));
-  const sig = `${JSON.stringify([config.download, config.upload, config.ping, config.jitter, config.device, config.button])}|${Object.keys(hass.states).length}`;
+  const sig = `${JSON.stringify([config.download, config.upload, config.ping, config.jitter, config.device, config.button])}|${stateCount(hass.states)}`;
   if (per.has(sig)) return per.get(sig);
   let out = null;
   if (config.download) {
@@ -2526,7 +2584,8 @@ const resolve = (hass, config) => {
         const list = key === "none" ? groups.get(key) : byDevice(hass).get(key) || groups.get(key);
         const found = findSensors(hass, list);
         if (!found.download) continue;
-        out = { platform, ...found, button: config.button ?? found.button };
+        // Sensors set in the configuration win over the ones found, as with a configured download sensor.
+        out = { platform, ...found, upload: config.upload ?? found.upload, ping: config.ping ?? found.ping, jitter: config.jitter ?? found.jitter, button: config.button ?? found.button };
         break;
       }
       if (out) break;
@@ -2538,9 +2597,10 @@ const resolve = (hass, config) => {
 };
 
 // Points [{ t, v }] of an entity from a history/history_during_period answer (minimal or full response).
-const historyPoints = (res, id) =>
+// Values are multiplied by `factor` (the sensor's unit in Mbit/s: the history has no attributes).
+const historyPoints = (res, id, factor = 1) =>
   asList(res?.[id])
-    .map((p) => ({ t: p.lu !== undefined ? p.lu * 1000 : parseTime(p.last_updated ?? p.last_changed), v: parseFloat(p.s ?? p.state) }))
+    .map((p) => ({ t: p.lu !== undefined ? p.lu * 1000 : parseTime(p.last_updated ?? p.last_changed), v: parseFloat(p.s ?? p.state) * factor }))
     .filter((p) => p.t !== null && Number.isFinite(p.v));
 
 const median = (list) => {
@@ -2808,7 +2868,9 @@ class SpeedtestCard extends CardBase {
       significant_changes_only: false,
     }).then((res) => {
       if (!res) return;
-      this._history = { dl: historyPoints(res, m.download), ul: m.upload ? historyPoints(res, m.upload) : [], days };
+      // In Mbit/s, as the current values (a sensor in kbit/s, MB/s or MiB/s would otherwise skew the chart and the median).
+      const dl = historyPoints(res, m.download, mbpsFactor(this._s(m.download)));
+      this._history = { dl, ul: m.upload ? historyPoints(res, m.upload, mbpsFactor(this._s(m.upload))) : [], days };
       this._lastDeps = null;
       this._update();
     });
@@ -2833,6 +2895,7 @@ class SpeedtestCard extends CardBase {
     const loss = m.loss ? num(this._s(m.loss)) : null;
     const pts = this._history?.dl || [];
     const plan = Number(c.plan_download) || null;
+    const planUl = Number(c.plan_upload) || null;
     const reference = plan || median(pts.map((p) => p.v));
     const ratio = Number(c.alert_ratio) || 0.5;
     const testing = this._testing && Date.now() - this._testing < TEST_MS;
@@ -2844,7 +2907,7 @@ class SpeedtestCard extends CardBase {
     else if (ping !== null && ping > (Number(c.ping_alert) || 100)) status = { cls: "warn", text: this._t("high_ping"), entity: m.ping };
     else status = { cls: "ok", text: this._t("normal") };
     const max = plan || niceMax(Math.max(dl ?? 0, ...pts.map((p) => p.v)) * 1.05);
-    return { dl, ul, ping, jitter, loss, plan, reference, ratio, status, testing, last, max };
+    return { dl, ul, ping, jitter, loss, plan, planUl, reference, ratio, status, testing, last, max };
   }
 
   _subtitle(m, sum) {
@@ -2916,7 +2979,9 @@ class SpeedtestCard extends CardBase {
     const cls = sum.status.cls === "warn" || sum.status.cls === "crit" ? sum.status.cls : "accent";
     const lines = [`<div class="big ${cls}">${svgIcon(ICONS.download)}<b>${esc(this._speed(sum.dl))}</b><span>${esc(this._t("mbps"))}</span></div>`];
     const ln = (icon, text, entity, c = "") => `<div class="line ${c}${entity ? " clickable" : ""}"${moreInfo(entity)}>${svgIcon(icon)}<span>${esc(text)}</span></div>`;
-    if (m.upload) lines.push(ln(ICONS.upload, `${this._speed(sum.ul)} ${this._t("mbps")} · ${this._t("upload")}`, m.upload, "active"));
+    // Under its share of the plan's upload (plan_upload), the upload line turns amber as the download does.
+    const ulSlow = sum.planUl && sum.ul !== null && !sum.testing && sum.ul < sum.planUl * sum.ratio;
+    if (m.upload) lines.push(ln(ICONS.upload, `${this._speed(sum.ul)} ${this._t("mbps")} · ${this._t("upload")}`, m.upload, ulSlow ? "warn" : "active"));
     const pingBits = [];
     if (m.ping) pingBits.push(`${this._ms(sum.ping)} ${this._t("ms")} ${this._t("ping")}`);
     if (m.jitter) pingBits.push(`${this._ms(sum.jitter)} ${this._t("ms")} ${this._t("jitter")}`);
@@ -3006,13 +3071,22 @@ class SpeedtestCard extends CardBase {
     this._call(...call);
     this._testing = Date.now();
     this._testedFrom = this._s(m.download)?.last_updated;
-    clearTimeout(this._testTimer);
-    this._testTimer = setTimeout(() => {
-      this._testing = null;
-      this._update();
-    }, TEST_MS);
+    this._armTest(TEST_MS);
     this._update();
     return true;
+  }
+
+  // The end of the speed test the card started, drawn when its time is up (cleared when the card leaves the page).
+  _armTest(ms) {
+    clearTimeout(this._testTimer);
+    this._testTimer = setTimeout(
+      () => {
+        this._testTimer = null;
+        this._testing = null;
+        this._update();
+      },
+      Math.max(0, ms),
+    );
   }
 
   // A new result ends the test the card started.
@@ -3100,7 +3174,10 @@ class SpeedtestCardEditor extends EditorBase {
       { name: "download", selector: { entity: { domain: "sensor" } } },
       { name: "upload", selector: { entity: { domain: "sensor" } } },
       { name: "ping", selector: { entity: { domain: "sensor" } } },
+      { name: "jitter", selector: { entity: { domain: "sensor" } } },
       { name: "button", selector: { entity: { domain: "button" } } },
+      // Several speed tests (two Speedtest.net servers, a router and Speedtest Tracker): the one the card shows.
+      { name: "device", selector: { device: { filter: Object.keys(PLATFORMS).map((integration) => ({ integration })) } } },
       {
         name: "illustration_theme",
         selector: { select: { mode: "dropdown", options: ["auto", "day", "night"].map((v) => ({ value: v, label: t(this._hass, this._config, `theme_${v}`) })) } },
@@ -3130,7 +3207,7 @@ class SpeedtestMiniCardEditor extends SpeedtestCardEditor {
 register(
   [
     ["speedtest-card", SpeedtestCard, { name: "Speedtest Card", description: "Internet speed: download gauge, upload, ping and jitter, 7-day history against your plan, and a button to run a test." }],
-    ["speedtest-mini-card", SpeedtestMiniCard, { name: "Speedtest Mini Card", description: "Compact internet speed: download, upload and ping, the week's sparkline and a run button." }],
+    ["speedtest-mini-card", SpeedtestMiniCard, { name: "Speedtest Mini Card", description: "Compact internet speed: a small gauge, download, upload and ping, a run button, and the full card behind its detail button." }],
     ["speedtest-card-editor", SpeedtestCardEditor],
     ["speedtest-mini-card-editor", SpeedtestMiniCardEditor],
   ],

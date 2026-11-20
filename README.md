@@ -158,13 +158,13 @@ zoom: true
 | `illustration` | both | `true` | Illustrated header (sky, gauge, fibre line, house on a lawn strip); `false` shows the classic header |
 | `illustration_theme` | both | `auto` | Picture of the illustrated header: `auto` (follows the Home Assistant theme: night with a dark theme, day with a light theme), `day` or `night` |
 | `show_title` | both | `true` | Show the title in the header |
-| `show_subtitle` | full | `true` | Show the subtitle (the service and when it measured) |
-| `device` | both | First found | Device (its name or id) of a supported integration, when you have several |
+| `show_subtitle` | both | `true` | Show the subtitle (the service and when it measured; the mini card shows it in its detail view) |
+| `device` | both | First found | Device (its id, as the visual editor sets it, or its name) of a supported integration, when you have several |
 | `download` | both | Automatic | Download speed sensor; set, the card uses it and finds the others on its device |
-| `upload`, `ping`, `jitter` | both | Automatic | Upload speed, ping and jitter sensors |
+| `upload`, `ping`, `jitter` | both | Automatic | Upload speed, ping and jitter sensors; each one set wins over the one found |
 | `button` | both | Automatic | Button that runs a test (Speedtest Tracker's *Run test* is found on its own) |
 | `plan_download` | both | — | Download speed of your plan, in Mbit/s: the top of the gauge, a line on the history, the reference of *Slow* |
-| `plan_upload` | both | — | Upload speed of your plan, in Mbit/s |
+| `plan_upload` | both | — | Upload speed of your plan, in Mbit/s: the upload line turns amber under `alert_ratio` of it |
 | `history_days` | both | `7` | Length of the history, in days |
 | `alert_ratio` | both | `0.5` | *Slow* under this share of the plan (or of the median of the history without a plan) |
 | `ping_alert` | both | `100` | *High latency* from this ping, in ms |
