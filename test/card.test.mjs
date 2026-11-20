@@ -339,3 +339,16 @@ test("plan_upload: the upload line turns amber under its share of the plan's upl
   assert.match((await mount({ plan_upload: 700 })).html(), /class="line active[^"]*"[^>]*>.*612 Mbit\/s · Upload/s);
   assert.match((await mount({ plan_upload: 2000 })).html(), /class="line warn[^"]*"[^>]*>.*612 Mbit\/s · Upload/s);
 });
+
+test("visual editor: the jitter sensor and the device of the speed test, labelled in every language", () => {
+  const Editor = st.element("speedtest-card-editor");
+  const ed = new Editor();
+  ed._hass = makeHass();
+  ed._config = {};
+  const names = JSON.stringify(ed._fields()).match(/"name":"[a-z_]+"/g).join();
+  assert.match(names, /"name":"jitter"/);
+  assert.match(names, /"name":"device"/);
+  for (const [code] of st.LANGUAGES) {
+    assert.ok(st.STRINGS[code].jitter_field && st.STRINGS[code].device_field, code);
+  }
+});
