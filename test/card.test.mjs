@@ -352,3 +352,18 @@ test("visual editor: the jitter sensor and the device of the speed test, labelle
     assert.ok(st.STRINGS[code].jitter_field && st.STRINGS[code].device_field, code);
   }
 });
+
+test("a test started before the card left the page: its timer is cleared, then armed again for the time left", async () => {
+  const { card } = await mount();
+  assert.equal(card._action("run"), true);
+  assert.ok(card._testing && card._testTimer);
+  card.disconnectedCallback();
+  assert.equal(card._testTimer, null);
+  card._testing = Date.now() - 1e9; // long over by the time it comes back
+  card.connectedCallback();
+  assert.ok(card._testTimer);
+  await new Promise((r) => setTimeout(r, 5));
+  assert.equal(card._testing, null);
+  assert.equal(card._testTimer, null);
+  card.disconnectedCallback();
+});

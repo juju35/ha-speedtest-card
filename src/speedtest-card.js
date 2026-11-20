@@ -1951,7 +1951,7 @@ class CardBase extends HTMLElement {
   _resolve() {
     const h = this._hass;
     if (!h?.entities || !h?.devices) return null;
-    const key = [h.entities, h.devices, h.areas, Object.keys(h.states).length];
+    const key = [h.entities, h.devices, h.areas, stateCount(h.states)];
     if (this._model && this._modelKey?.every((k, i) => k === key[i])) return this._model;
     this._modelKey = key;
     this._model = this._build();
@@ -1972,6 +1972,8 @@ class CardBase extends HTMLElement {
     this._outside.on();
     this._watchPill();
     if (this._dialog) window.addEventListener("keydown", this._onKey);
+    // A speed test started before the card left the page: its end is drawn on time again.
+    if (this._testing) this._armTest(TEST_MS - (Date.now() - this._testing));
     clearInterval(this._tick);
     this._tick = setInterval(() => {
       if (this._hass) this.hass = this._hass;
@@ -1986,7 +1988,9 @@ class CardBase extends HTMLElement {
     window.removeEventListener("pointercancel", this._onPressEnd, true);
     clearInterval(this._tick);
     clearInterval(this._countdown);
-    this._tick = this._countdown = null;
+    clearTimeout(this._testTimer);
+    if (this._pillFrame) cancelAnimationFrame(this._pillFrame);
+    this._tick = this._countdown = this._testTimer = this._pillFrame = null;
     this._outside?.off();
     this._unwatchPill();
     window.removeEventListener("keydown", this._onKey);
@@ -2528,12 +2532,22 @@ const findSensors = (hass, list) => {
 
 const _cache = new WeakMap();
 
+// The number of states, counted once per `hass.states` object (a new one comes with each state change): both the
+// card's and the model's lookups ask for it on every push.
+const COUNTS = new WeakMap();
+const stateCount = (states) => {
+  if (!states) return 0;
+  let n = COUNTS.get(states);
+  if (n === undefined) COUNTS.set(states, (n = Object.keys(states).length));
+  return n;
+};
+
 // The speed test of the configuration, else of the first supported integration found (or the configured device).
 // Returns { platform, name, download, upload, ping, jitter, loss, server, isp, last, button } (entity ids).
 const resolve = (hass, config) => {
   let per = _cache.get(hass.entities);
   if (!per) _cache.set(hass.entities, (per = new Map()));
-  const sig = `${JSON.stringify([config.download, config.upload, config.ping, config.jitter, config.device, config.button])}|${Object.keys(hass.states).length}`;
+  const sig = `${JSON.stringify([config.download, config.upload, config.ping, config.jitter, config.device, config.button])}|${stateCount(hass.states)}`;
   if (per.has(sig)) return per.get(sig);
   let out = null;
   if (config.download) {
@@ -3057,13 +3071,22 @@ class SpeedtestCard extends CardBase {
     this._call(...call);
     this._testing = Date.now();
     this._testedFrom = this._s(m.download)?.last_updated;
-    clearTimeout(this._testTimer);
-    this._testTimer = setTimeout(() => {
-      this._testing = null;
-      this._update();
-    }, TEST_MS);
+    this._armTest(TEST_MS);
     this._update();
     return true;
+  }
+
+  // The end of the speed test the card started, drawn when its time is up (cleared when the card leaves the page).
+  _armTest(ms) {
+    clearTimeout(this._testTimer);
+    this._testTimer = setTimeout(
+      () => {
+        this._testTimer = null;
+        this._testing = null;
+        this._update();
+      },
+      Math.max(0, ms),
+    );
   }
 
   // A new result ends the test the card started.
