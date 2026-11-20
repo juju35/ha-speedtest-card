@@ -2454,11 +2454,11 @@ const UNIT_MBPS = {
   kbps: 1e-3,
   gbps: 1e3,
 };
+// The factor that turns a sensor's values into Mbit/s (1 for Mbit/s or an unknown unit).
+const mbpsFactor = (s) => UNIT_MBPS[String(s?.attributes?.unit_of_measurement || "Mbit/s").toLowerCase()] ?? 1;
 const toMbps = (s) => {
   const v = num(s);
-  if (v === null) return null;
-  const u = String(s.attributes?.unit_of_measurement || "Mbit/s").toLowerCase();
-  return v * (UNIT_MBPS[u] ?? 1);
+  return v === null ? null : v * mbpsFactor(s);
 };
 
 // The sensors of a speed test among a list of registry entries: download, upload, ping, jitter, packet loss, server,
@@ -2526,7 +2526,8 @@ const resolve = (hass, config) => {
         const list = key === "none" ? groups.get(key) : byDevice(hass).get(key) || groups.get(key);
         const found = findSensors(hass, list);
         if (!found.download) continue;
-        out = { platform, ...found, button: config.button ?? found.button };
+        // Sensors set in the configuration win over the ones found, as with a configured download sensor.
+        out = { platform, ...found, upload: config.upload ?? found.upload, ping: config.ping ?? found.ping, jitter: config.jitter ?? found.jitter, button: config.button ?? found.button };
         break;
       }
       if (out) break;
@@ -2538,9 +2539,10 @@ const resolve = (hass, config) => {
 };
 
 // Points [{ t, v }] of an entity from a history/history_during_period answer (minimal or full response).
-const historyPoints = (res, id) =>
+// Values are multiplied by `factor` (the sensor's unit in Mbit/s: the history has no attributes).
+const historyPoints = (res, id, factor = 1) =>
   asList(res?.[id])
-    .map((p) => ({ t: p.lu !== undefined ? p.lu * 1000 : parseTime(p.last_updated ?? p.last_changed), v: parseFloat(p.s ?? p.state) }))
+    .map((p) => ({ t: p.lu !== undefined ? p.lu * 1000 : parseTime(p.last_updated ?? p.last_changed), v: parseFloat(p.s ?? p.state) * factor }))
     .filter((p) => p.t !== null && Number.isFinite(p.v));
 
 const median = (list) => {
@@ -2808,7 +2810,9 @@ class SpeedtestCard extends CardBase {
       significant_changes_only: false,
     }).then((res) => {
       if (!res) return;
-      this._history = { dl: historyPoints(res, m.download), ul: m.upload ? historyPoints(res, m.upload) : [], days };
+      // In Mbit/s, as the current values (a sensor in kbit/s, MB/s or MiB/s would otherwise skew the chart and the median).
+      const dl = historyPoints(res, m.download, mbpsFactor(this._s(m.download)));
+      this._history = { dl, ul: m.upload ? historyPoints(res, m.upload, mbpsFactor(this._s(m.upload))) : [], days };
       this._lastDeps = null;
       this._update();
     });
@@ -2833,6 +2837,7 @@ class SpeedtestCard extends CardBase {
     const loss = m.loss ? num(this._s(m.loss)) : null;
     const pts = this._history?.dl || [];
     const plan = Number(c.plan_download) || null;
+    const planUl = Number(c.plan_upload) || null;
     const reference = plan || median(pts.map((p) => p.v));
     const ratio = Number(c.alert_ratio) || 0.5;
     const testing = this._testing && Date.now() - this._testing < TEST_MS;
@@ -2844,7 +2849,7 @@ class SpeedtestCard extends CardBase {
     else if (ping !== null && ping > (Number(c.ping_alert) || 100)) status = { cls: "warn", text: this._t("high_ping"), entity: m.ping };
     else status = { cls: "ok", text: this._t("normal") };
     const max = plan || niceMax(Math.max(dl ?? 0, ...pts.map((p) => p.v)) * 1.05);
-    return { dl, ul, ping, jitter, loss, plan, reference, ratio, status, testing, last, max };
+    return { dl, ul, ping, jitter, loss, plan, planUl, reference, ratio, status, testing, last, max };
   }
 
   _subtitle(m, sum) {
@@ -2916,7 +2921,9 @@ class SpeedtestCard extends CardBase {
     const cls = sum.status.cls === "warn" || sum.status.cls === "crit" ? sum.status.cls : "accent";
     const lines = [`<div class="big ${cls}">${svgIcon(ICONS.download)}<b>${esc(this._speed(sum.dl))}</b><span>${esc(this._t("mbps"))}</span></div>`];
     const ln = (icon, text, entity, c = "") => `<div class="line ${c}${entity ? " clickable" : ""}"${moreInfo(entity)}>${svgIcon(icon)}<span>${esc(text)}</span></div>`;
-    if (m.upload) lines.push(ln(ICONS.upload, `${this._speed(sum.ul)} ${this._t("mbps")} · ${this._t("upload")}`, m.upload, "active"));
+    // Under its share of the plan's upload (plan_upload), the upload line turns amber as the download does.
+    const ulSlow = sum.planUl && sum.ul !== null && !sum.testing && sum.ul < sum.planUl * sum.ratio;
+    if (m.upload) lines.push(ln(ICONS.upload, `${this._speed(sum.ul)} ${this._t("mbps")} · ${this._t("upload")}`, m.upload, ulSlow ? "warn" : "active"));
     const pingBits = [];
     if (m.ping) pingBits.push(`${this._ms(sum.ping)} ${this._t("ms")} ${this._t("ping")}`);
     if (m.jitter) pingBits.push(`${this._ms(sum.jitter)} ${this._t("ms")} ${this._t("jitter")}`);
@@ -3130,7 +3137,7 @@ class SpeedtestMiniCardEditor extends SpeedtestCardEditor {
 register(
   [
     ["speedtest-card", SpeedtestCard, { name: "Speedtest Card", description: "Internet speed: download gauge, upload, ping and jitter, 7-day history against your plan, and a button to run a test." }],
-    ["speedtest-mini-card", SpeedtestMiniCard, { name: "Speedtest Mini Card", description: "Compact internet speed: download, upload and ping, the week's sparkline and a run button." }],
+    ["speedtest-mini-card", SpeedtestMiniCard, { name: "Speedtest Mini Card", description: "Compact internet speed: a small gauge, download, upload and ping, a run button, and the full card behind its detail button." }],
     ["speedtest-card-editor", SpeedtestCardEditor],
     ["speedtest-mini-card-editor", SpeedtestMiniCardEditor],
   ],

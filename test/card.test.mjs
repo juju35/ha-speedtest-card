@@ -314,3 +314,28 @@ test("status pill: on the title row or under the subtitle, measured (no fixed wi
   const zoom = src.match(/\n {2}\.banner \.zoom \{([^}]*)\}/)[1];
   for (const d of [/position: absolute/, /top: 5px/, /right: 5px/, /width: 24px/, /height: 24px/]) assert.match(zoom, d);
 });
+
+test("the history is in Mbit/s whatever the sensor's unit, as the current value", async () => {
+  // A sensor in MB/s: its recorded states (no attributes) are converted with the unit of its current state.
+  const data = mockData();
+  for (const id of ["sensor.speedtest_reception", "sensor.speedtest_envoi"]) {
+    const s = data.states[id];
+    s.state = String(Number(s.state) / 8);
+    s.attributes = { ...s.attributes, unit_of_measurement: "MB/s" };
+    for (const p of data.ws["history/history_during_period"][id]) p.s = String(Number(p.s) / 8);
+  }
+  const { card } = await mount({}, "default", SpeedtestCard, { data });
+  const raw = HISTORY["sensor.speedtest_reception"].map((p) => Number(p.s));
+  assert.ok(Math.abs(card._history.dl.at(-1).v - raw.at(-1)) < 1e-6);
+  assert.equal(st.historyPoints({ x: [{ state: "3", last_updated: "2026-11-16T10:00:00Z" }] }, "x", 8)[0].v, 24);
+});
+
+test("sensors set in the configuration win over the ones found, without a download sensor too", () => {
+  const m = st.resolve(makeHass(), { ping: "sensor.other_ping", jitter: "sensor.other_jitter", upload: "sensor.other_up" });
+  same([m.download, m.upload, m.ping, m.jitter], ["sensor.speedtest_reception", "sensor.other_up", "sensor.other_ping", "sensor.other_jitter"]);
+});
+
+test("plan_upload: the upload line turns amber under its share of the plan's upload", async () => {
+  assert.match((await mount({ plan_upload: 700 })).html(), /class="line active[^"]*"[^>]*>.*612 Mbit\/s · Upload/s);
+  assert.match((await mount({ plan_upload: 2000 })).html(), /class="line warn[^"]*"[^>]*>.*612 Mbit\/s · Upload/s);
+});
