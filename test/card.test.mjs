@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { HISTORY, mockData } from "../scripts/mock-states.mjs";
 import { load } from "./load.mjs";
+import { source } from "./source.mjs";
 
 const st = load({ names: ["toMbps", "resolve", "historyPoints", "niceMax", "median", "STRINGS", "LANGUAGES"] });
 const SpeedtestCard = st.element("speedtest-card");
@@ -305,8 +306,7 @@ test("illustrated header: the dark theme shows the night picture even while the 
 });
 
 test("status pill: on the title row or under the subtitle, measured (no fixed width), its dot at 200 px; the zoom button in the corner", async () => {
-  const { readFileSync } = await import("node:fs");
-  const src = readFileSync(new URL("../src/speedtest-card.js", import.meta.url), "utf8");
+  const src = source;
   assert.match(src, /<div class="trow"><div class="name">\$\{esc\(title\)\}<\/div><span class="chip /);
   assert.match(src, /\.titles\.pill-below \.trow \{ display: contents; \}/);
   assert.doesNotMatch(src, /st-titles|max-width: 50%/);
