@@ -4,7 +4,7 @@
 
 export const BASE_STYLE = `
   :host { --st-accent: #00897b; --st-ok: var(--success-color, #43a047); --st-warn: var(--warning-color, #ffa600);
-          --st-crit: var(--error-color, #db4437); --st-idle: var(--disabled-text-color, #9e9e9e); --st-active: var(--info-color, #039be5);
+          --st-crit: var(--error-color, #db4437); --st-idle: var(--secondary-text-color, #9e9e9e); --st-active: var(--info-color, #039be5);
           /* Text in a state color is mixed with the text color so that it reads at 4.5:1 at least. */
           --st-accent-text: color-mix(in srgb, var(--st-accent) 50%, var(--primary-text-color)); }
   ha-card { overflow: hidden; container: st-card / inline-size; }
